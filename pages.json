@@ -1,0 +1,32 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "deituiIM"
+			}
+		},{
+			"path":"pages/index/pm",
+			"style": {
+				"navigationBarTitleText": "私聊"
+			}
+		},{
+			"path":"pages/index/chat",
+			"style": {
+				"navigationBarTitleText": "粉丝团"
+			}
+		},{
+			"path":"pages/index/contact",
+			"style": {
+				"navigationBarTitleText": "联系人"
+			}
+		}
+		
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
