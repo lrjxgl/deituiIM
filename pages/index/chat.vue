@@ -111,7 +111,7 @@
 						}
 						that.addMsg(json);
 						//保存记录
-						chatDb.add(json);
+						chatDb.addGroup(json);
 						setTimeout(function() {
 							uni.pageScrollTo({
 								scrollTop: 1000000

@@ -17,6 +17,12 @@ module.exports={
 			touid:msg.touid
 		});
 	},
+	addGroup:function(msg){
+		DB.setTable("chat").insert(msg);
+		DB.setTable("chatIndex").replaceInsert(msg,{
+			gid:msg.gid
+		});
+	},
 	msgList:function(ops){
 		return DB.setTable("chat").getAll(ops);
 	},
