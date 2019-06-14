@@ -35,4 +35,7 @@ uni-page-head .uni-page-head-hd{
 .uni-swiper-dots{
 	flex-direction: row;
 }
+rich-text>div{
+	flex-direction: row;
+}
 </style>

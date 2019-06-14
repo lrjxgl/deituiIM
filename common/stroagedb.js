@@ -21,7 +21,6 @@ module.exports=function(){
 				return res;
 			}
 			var $where=ops;
-			console.log($where)
 			var arr=new Array();
 			if(res){
 				var rs;
@@ -80,7 +79,6 @@ module.exports=function(){
 				
 				for(var i=0;i<res.length;i++){
 					var rs=res[i];
-					console.log(rs)
 					var eb=true;
 					for(var key in $where){
 						
@@ -92,17 +90,16 @@ module.exports=function(){
 						}
 						
 					}
-					console.log(rs);
-					console.log(eb);
+
 					if(!eb){
-						console.log(rs)
+
 						arr.unshift(rs);
-						console.log(arr)
+
 						
 					}
 					
 				}
-				console.log(arr);
+
 				if(arr.length==0){
 					var mlist=new Array();
 					mlist.push(msg);

@@ -6,6 +6,10 @@
 				"navigationBarTitleText": "deituiIM"
 			}
 		},{
+			"path":"pages/login/index"
+		}
+		
+		,{
 			"path":"pages/index/pm",
 			"style": {
 				"navigationBarTitleText": "私聊"

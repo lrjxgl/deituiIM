@@ -1,12 +1,15 @@
 module.exports={
-	 
+	wsHost:"wss://wss.deituicms.com:8282" ,
 	encode:function(str,type){
 		
 	},
 	
 	decode:function(str){
 		// #ifdef H5
-		str=str.replace(/\.\.\/\.\.\//g,"");
+		str=str.replace(/\.\.\/\.\.\//g,"./");
+		// #endif
+		// #ifdef APP-PLUS
+		str=str.replace(/\.\.\/\.\.\//g,"./");
 		// #endif
 		//解析图片
 		str=str.replace(/\[img=(.*)\]/g,'<img class="wmax" src="$1" />');
@@ -27,11 +30,29 @@ module.exports={
 		var res=str.match(/(\\[^ ]*) /g);
 		if(res!=null){
 			for(var i=0;i<res.length;i++){
-				str=str.replace(res[i],"<img src='../../static/"+res[i].replace("\\","").replace(" ","")+".gif' />");
+				switch(res[i]){
+					case "\\微笑 ":
+						str=str.replace(res[i],"<img src='../../static/weixiao.gif' />");
+						break;
+					case "\\惊讶 ":
+						str=str.replace(res[i],"<img src='../../static/jingya.gif' />");
+						break;
+					case "\\哭泣 ":
+						str=str.replace(res[i],"<img src='../../static/kuqi.gif' />");
+						break;
+					case "\\蛋糕 ":
+						str=str.replace(res[i],"<img src='../../static/dangao.gif' />");
+						break;
+				}
+				console.log(str)
+				//str=str.replace(res[i],"<img src='../../static/"+res[i].replace("\\","").replace(" ","")+".gif' />");
 			}
 		}
 		// #ifdef H5
 		str=str.replace(/\.\.\/\.\.\//g,"");
+		// #endif
+		// #ifdef APP-PLUS
+		str=str.replace(/\.\.\/\.\.\//g,"./");
 		// #endif
 		return str;
 	}

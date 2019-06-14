@@ -2,9 +2,9 @@
 	<div>
 		<div class="footer-row"></div>
 		<div class="footer">
-			<navigator url="index" :class="{'footer-active':tabActive=='index'}" class="footer-item  icon-message_light">消息</navigator>
+			<div @click="goIndex" :class="{'footer-active':tabActive=='index'}" class="footer-item  icon-message_light">消息</div>
 		
-			<navigator url="contact" :class="{'footer-active':tabActive=='contact'}"  class="footer-item icon-people_list_light  icon-my_light">通讯录</navigator>
+			<div @click="goContact" :class="{'footer-active':tabActive=='contact'}"  class="footer-item icon-people_list_light  icon-my_light">通讯录</div>
 		
 		</div>
 	</div>
@@ -22,6 +22,18 @@
 		},
 		created:function(){
 			this.tabActive=this.tab;
+		},
+		methods:{
+			goIndex:function(){
+				uni.reLaunch({
+					url:"index"
+				})
+			},
+			goContact:function(){
+				uni.reLaunch({
+					url:"contact"
+				})
+			}
 		}
 	}
 </script>

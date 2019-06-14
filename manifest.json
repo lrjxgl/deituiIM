@@ -1,9 +1,9 @@
 {
     "name" : "uniChat",
-    "appid" : "__UNI__1EC5037",
+    "appid" : "",
     "description" : "",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "1.0.1",
+    "versionCode" : "101",
     "transformPx" : false,
     "app-plus" : {
         /* 5+App特有相关 */
@@ -14,7 +14,9 @@
             "autoclose" : true,
             "delay" : 0
         },
-        "modules" : {},
+        "modules" : {
+            "VideoPlayer" : {}
+        },
         /* 模块配置 */
         "distribute" : {
             /* 应用发布信息 */
@@ -45,7 +47,17 @@
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ]
             },
-            "ios" : {},
+            "ios" : {
+                "privacyDescription" : {
+                    "NSPhotoLibraryUsageDescription" : "选择图片上传头像或者朋友圈",
+                    "NSPhotoLibraryAddUsageDescription" : "拍摄照片保存到本地",
+                    "NSMicrophoneUsageDescription" : "发送语音信息",
+                    "NSCameraUsageDescription" : "拍照传照片",
+                    "NSLocationWhenInUseUsageDescription" : "获取用户地址用于查找附近的人",
+                    "NSLocationAlwaysUsageDescription" : "获取用户地址用于查找附近的人",
+                    "NSLocationAlwaysAndWhenInUseUsageDescription" : "获取用户地址用于查找附近的人"
+                }
+            },
             /* ios打包配置 */
             "sdkConfigs" : {}
         }

@@ -1,13 +1,16 @@
 <template>
 	<div>
 		<div class="main-body">
+			
+			 
 			<block v-if="indexList.length>0">
 			<div v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
 				<image class="wh-40 mgr-10" src="../../static/100x100.jpg"></image>
 				<div class="flex-1">
-					<div class="cl1" v-if="item.gid!=0">{{item.gid}}</div>
-					<div class="cl1" v-else>{{item.touid}}</div>
-					<div class="cl2 flex" v-html="item.content"></div>
+					<div class="cl1 mgb-5" v-if="item.gid!=0">{{item.gid}}</div>
+					<div class="cl1 mgb-5" v-else>{{item.touid}}</div>
+					 
+					<chat-msg :content="item.content"></chat-msg>
 				</div>
 				<div class="cl3">{{item.time}}</div>
 			</div>
@@ -25,25 +28,39 @@
 <script>
 	import uu from "../../common/userlist.js";
 	import mtFooter from "../../components/footer.vue";
-	import chatDb from "../../common/chatdb.js"
+	import chatDb from "../../common/chatdb.js";
+	 
+	import chatMsg from "../../components/chatmsg.vue";
 	export default {
 		components:{
-			mtFooter
+			mtFooter,
+			chatMsg
 		},
 		data() {
 			return {
 				userList: [],
 				groupList:[],
-				indexList:[]
+				indexList:[],
+				isLoad:false 
 			}
 		},
 		onLoad() {
 			this.indexList=chatDb.indexList();
+			setTimeout(function(){
+				this.isload=true;
+			},1000)
+			
 		},
 		onShow(){
-			this.indexList=chatDb.indexList();
+			if(this.isLoad){
+				this.indexList=chatDb.indexList();
+			}
+			
 		},
 		methods: {
+			playMusic:function(url){
+				audioClass.play(url);
+			},
 			goItem:function(item){
 				if(item.gid!=0 || item.gid!=""){
 					uni.navigateTo({

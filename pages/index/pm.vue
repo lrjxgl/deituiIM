@@ -7,14 +7,15 @@
 						<div v-for="(item,index) in list" :key="index">
 							<div class="chatbox" v-if="item.isme">
 								<div class="flex-1"></div>
-								<div class="chatbox-desc-b mgb-5" v-html="item.content"></div>
+								<chat-msg :content="item.content"></chat-msg>
+							 
 								<div class="chatbox-nick-b">{{item.uid}}</div>
 							</div>
 							<div class="chatbox" v-else>
 								<image src="../../static/100x100.jpg" class="wh-40 mgr-10"></image>
 								<div class="flex-1">
 									<div class="chatbox-nick-a mgb-5">{{item.uid}}</div>
-									<div class="chatbox-desc-a" v-html="item.content"></div>
+									<chat-msg :content="item.content"></chat-msg>
 								</div>
 							</div>
 
@@ -56,17 +57,23 @@
 </template>
 
 <script>
+	var ws;
 	var gid = 0;
 	var uid = "胡歌";
 	var touid = "小仙女";
 	import uu from "../../common/userlist.js";
 	import chatClass from "../../common/chat.class.js";
-	import chatDb from "../../common/chatdb.js"
+	import chatDb from "../../common/chatdb.js";
+	import chatMsg from "../../components/chatmsg.vue"; 
 	export default {
+		components:{
+			chatMsg
+		},
 		data: function() {
 			return {
 				"list": [],
-				content: ""
+				content: "",
+				wsConn:false
 			}
 		},
 		onLoad:function(ops){
@@ -82,51 +89,88 @@
 			uni.setNavigationBarTitle({
 				title:"与"+ops.uuid+"聊天..."
 			})
-			uni.connectSocket({
-				url: 'wss://wss.deituicms.com:8282'
-			});
-			uni.onSocketOpen(function(res) {
-				var msg = JSON.stringify({
-					type: "login",
-					k: uid,
-					gid: gid,
-					content: "login"
-				});
-				uni.sendSocketMessage({
-					data:msg
-				});
-			});
-			uni.onSocketError(function(res) {
-				console.log('WebSocket连接打开失败，请检查！');
-			});
-			uni.onSocketMessage(function(e) {
-				var res = JSON.parse(e.data);
-				 
-				switch (res.type) {
-					case "login":
-						break;
-					case "say":
-						var json = {
-							gid:gid,
-							uid: res.wsclient_from,
-							touid:res.wsclient_to,
-							content: chatClass.decode(res.content),
-							time: res.time,
-							isme: uid == res.wsclient_from ? true : false
-						}
-						that.addMsg(json);
-						chatDb.add(json);
-						setTimeout(function() {
-							uni.pageScrollTo({
-								scrollTop: 1000000
-							});
-						}, 100)
-						break;
+			uni.closeSocket({
+				success:function(res){
+					
+				}
+			})
+			setTimeout(function(){
+				that.wsInit();
+			},600);
+			setTimeout(function(){
+				this.wsConn=true;
+			},600) 
+		},
+		onHide:function(){
+			ws.close({
+				success:function(res) {
+					console.log("hide close success")
 				}
 			});
-			 
+		},
+		onShow:function() {
+			var that=this;
+			if(this.wsConn){
+				setTimeout(function(){
+					that.wsInit();
+				},600);
+				
+			}
 		},
 		methods: {
+			wsInit:function(){
+				var that=this;
+				
+				ws=uni.connectSocket({
+					url: chatClass.wsHost,
+					complete:function(res){
+						
+					}
+				});
+				ws.onOpen(function(res) {
+					
+					var msg = JSON.stringify({
+						type: "login",
+						k: uid,
+						gid: gid,
+						content: "login"
+					});
+					ws.send({
+						data:msg
+					});
+				});
+				ws.onError(function(res) {
+					
+					 
+					
+				});
+				ws.onMessage(function(e) {
+					var res = JSON.parse(e.data);
+				  
+					switch (res.type) {
+						case "login":
+							break;
+						case "say":
+							var json = {
+								gid:gid,
+								uid: res.wsclient_from,
+								touid:res.wsclient_to,
+								content: res.content,
+								time: res.time,
+								isme: uid == res.wsclient_from ? true : false
+							}
+							console.log(json);
+							that.addMsg(json);
+							chatDb.add(json);
+							setTimeout(function() {
+								uni.pageScrollTo({
+									scrollTop: 1000000
+								});
+							}, 100)
+							break;
+					}
+				});
+			},
 			addMsg: function($msg) {
 				var list = this.list;
 				list.push($msg);
@@ -169,7 +213,9 @@
 					gid: gid,
 					content: content
 				});
-				uni.sendSocketMessage({
+				
+				console.log("发送")
+				ws.send({
 					data:msg
 				});
 				that.content="";
