@@ -34,7 +34,9 @@
 						<div class="input-flex-btn w60" @click="send('content')">发送</div>
 					</div>
 					<div class="flex flex-center">
+						<!-- #ifndef H5 -->
 						<div @click="send('audio')" class="flex-1 iconfont icon-voicefill f20"></div>
+						<!-- #endif -->
 						<div  @click="send('pic')" class="flex-1 iconfont icon-pic f20 sendPic"></div>
 						<div @click="send('pic')" class="flex-1 iconfont icon-camera f20 sendPic"></div>
 						<div @click="send('video')" class="flex-1 iconfont icon-recordlight f20"></div>

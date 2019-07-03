@@ -20,7 +20,7 @@
 </template>
 
 <script>
-	import chatClass from "../common/chat.class.js";
+	import emo from "../common/emo.js";
 	import audioClass from "../common/audio.class.js";
 	export default{
 		props:{
@@ -60,7 +60,7 @@
 			}else{
 				this.nodes=[{
 					type:"text",
-					content:chatClass.decodeEmo(this.content)
+					content:emo.decodeEmo(this.content)
 				}]
 			}
 			

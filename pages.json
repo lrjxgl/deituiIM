@@ -7,6 +7,10 @@
 			}
 		},{
 			"path":"pages/login/index"
+		},{
+			"path":"pages/login/findpwd"
+		},{
+			"path":"pages/register/index"
 		}
 		
 		,{
@@ -20,12 +24,76 @@
 				"navigationBarTitleText": "粉丝团"
 			}
 		},{
-			"path":"pages/index/contact",
+			"path":"pages/contact/index",
 			"style": {
 				"navigationBarTitleText": "联系人"
 			}
+		},{
+			"path":"pages/user/index",
+			"style":{
+				"navigationBarTitleText":"我的"
+			}
+		},{
+			"path":"pages/user/info",
+			"style":{
+				"navigationBarTitleText":"用户信息编辑"
+			}
+		},
+		{
+			"path":"pages/user/password",
+			"style":{
+				"navigationBarTitleText":"修改密码"
+			}
+		},
+		{
+			"path":"pages/user/paypwd",
+			"style":{
+				"navigationBarTitleText":"支付密码"
+			}
+		},
+		{
+			"path":"pages/user/user_head",
+			"style":{
+				"navigationBarTitleText":"头像"
+			}
+		},
+		{
+			"path":"pages/news/index",
+			"style":{
+				"navigationBarTitleText":"广场"
+			}
+		},{
+			"path":"pages/match/index",
+			"style":{
+				"navigationBarTitleText":"无聊的人"
+			}
+		},{
+			"path":"pages/comment/my",
+			"style":{
+				"navigationBarTitleText":"我的评论"
+			}
 		}
 		
+	],
+	"subPackages":[
+		{
+			"root":"pagesblog",
+			"pages":[
+				{	
+					"path":"sblog/index",
+					"style":{
+						"navigationBarTitleText":"广场"
+					}
+				},
+				{"path":"sblog_blog/show"},
+				{"path":"sblog_blog/topic"},
+				{"path":"sblog_blog/add"},
+				{"path":"sblog_blog/my"},
+				{"path":"sblog_blog/search"},
+				{"path":"sblog_user/index"}
+			]
+			
+		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

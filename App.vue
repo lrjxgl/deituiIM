@@ -17,6 +17,7 @@
 	@import "./common/iconfont.css";
 	@import "./common/dt-ui-uni.css";
 	@import "./common/chat.css";
+	@import "./common/emo.css"; 
 	uni-input div{
 	width: 100%;
 }

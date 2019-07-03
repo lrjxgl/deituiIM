@@ -63,6 +63,12 @@ module.exports = {
 	setLoginCode:function(code){
 		uni.setStorageSync("loginCode",code)
 	},
+	isLogin:function(){
+		if(this.getLoginCode()){
+			return true;
+		}
+		return false;
+	},
 	fromapp:function(){
 		//var $paltform= uni.platform();
 		return "uniapp";

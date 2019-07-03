@@ -5,10 +5,10 @@
 			 
 			<block v-if="indexList.length>0">
 			<div v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
-				<image class="wh-40 mgr-10" src="../../static/100x100.jpg"></image>
+				<image class="wh-40 mgr-10" :src="item.user_head+'.100x100.jpg'"></image>
 				<div class="flex-1">
 					<div class="cl1 mgb-5" v-if="item.gid!=0">{{item.gid}}</div>
-					<div class="cl1 mgb-5" v-else>{{item.touid}}</div>
+					<div class="cl1 mgb-5" v-else>{{item.nickname}}</div>
 					 
 					<chat-msg :content="item.content"></chat-msg>
 				</div>
@@ -45,6 +45,12 @@
 			}
 		},
 		onLoad() {
+			if(!this.app.isLogin()){
+				uni.reLaunch({
+					url:"../login/index"
+				});
+				return false;
+			} 
 			this.indexList=chatDb.indexList();
 			setTimeout(function(){
 				this.isload=true;
@@ -68,7 +74,7 @@
 					})
 				}else{
 					uni.navigateTo({
-						url:"pm?uuid="+item.touid
+						url:"pm?uuid="+item.touserid
 					})
 				}
 			}
