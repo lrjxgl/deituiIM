@@ -34,17 +34,17 @@
 					</div>
 					<div class="flex flex-center">
 						<!-- #ifndef H5 -->
-						<div @click="send('audio')" class="flex-1 iconfont icon-voicefill f20"></div>
+						<div @click="aRecordClass='flex-col'" class="flex-1 iconfont icon-voicefill f20"></div>
 						<!-- #endif -->
 						<div  @click="choiceImg('pic')" class="flex-1 iconfont icon-pic f20 sendPic"></div>
 						<!-- #ifndef H5 -->
 						<div @click="catchImg('pic')" class="flex-1 iconfont icon-camera f20 sendPic"></div>
 						<!-- #endif -->
 						<!-- #ifndef H5 -->
-						<div @click="send('video')" class="flex-1 iconfont icon-recordlight f20"></div>
+						<div @click="videoRecord('video')" class="flex-1 iconfont icon-recordlight f20"></div>
 						<!-- #endif -->
 						<div @click="emoClass='flex-col'" class="flex-1 iconfont icon-emoji f20"></div>
-						<div @click="choiceFile('file')" class="flex-1 iconfont icon-file f20 "></div>
+						<div @click="choiceFile('file')" class="flex-1 iconfont none icon-file f20 "></div>
 					</div>
 
 				</div>
@@ -60,21 +60,41 @@
 					</div>
 				</div>
 			</div>
-
+			<div v-if="isFriend==0" @click="addFriend(touser.userid)" class="add-friend-btn iconfont icon-friend_add_light"></div>
+			<div class="modal-group" :class="aRecordClass">
+				<div class="modal-mask" @click="aRecordClass=''"></div>
+			 
+				<div @click="aRecordToggle" class="aRecordBox">
+					<div :class="{'aRecord-active':aRecordIng}" class="iconfont icon-voice f36"></div>
+					<div v-if="aRecordIng">点击结束</div>
+					<div v-else>点击录音</div>
+				</div>
+				 
+			</div>
+			
 		</div>
 	</div>
 </template>
 
 <script>
+	import chatDb from "../../common/chatdb.js";
+	import chatMsg from "../../components/chatmsg.vue"; 
+	import emo from "../../common/emo.js";
 	var ws;
 	var gid = 0;
 	var uid = "胡歌";
 	var touid = "小仙女";
-	import uu from "../../common/userlist.js";
-	import chatClass from "../../common/chat.class.js";
-	import chatDb from "../../common/chatdb.js";
-	import chatMsg from "../../components/chatmsg.vue"; 
-	import emo from "../../common/emo.js";
+	var inPage=false;
+	var lastMsg;
+	var  audioRecord;
+	const aRecordOptions = {
+	  duration: 10000,
+	  sampleRate: 44100,
+	  numberOfChannels: 1,
+	  encodeBitRate: 192000,
+	  format: 'mp3',
+	  frameSize: 50
+	}
 	export default {
 		components:{
 			chatMsg
@@ -85,32 +105,65 @@
 				content: "",
 				wsConn:false,
 				user:{},
-				toUser:{},
+				touser:{},
+				isFriend:1,
 				emoList:[],
-				emoClass:""
+				emoClass:"",
+				aRecordClass:"",
+				aRecordIng:false
 			}
 		},
 		onLoad:function(ops){
+			var that=this;
 			this.getPage(ops.uuid);
 			this.emoList=emo.emoList();
+			//#ifndef H5
+			audioRecord =  wx.getRecorderManager();
+			
+			 
+			audioRecord.onStop((res) => {
+			  if(res.tempFilePath){
+			  	that.recordUpload(res.tempFilePath);
+			  }
+			   
+			})
+			 
+			audioRecord.onError((res) => {
+				console.log(e)
+			})
+			//#endif
 		},
 		onHide:function(){
+			if(inPage){
+				return false;
+			} 
 			ws.close({
 				success:function(res) {
-					console.log("hide close success")
+					 
 				}
-			});
+			}); 
 		},
 		onShow:function() {
+			if(inPage){				
+				return false;
+			} 
 			var that=this;
 			if(this.wsConn){
-				setTimeout(function(){
-					that.wsInit();
-				},600);
-				
-			}
+				that.wsInit();
+			} 
 		},
 		methods: {
+			addFriend:function(touserid){
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/index.php?m=friend&a=add&touserid="+touserid,
+					success:function(res){
+						uni.showToast({
+							title:res.message
+						})
+					}
+				})
+			}, 
 			getPage:function(touserid){
 				var that=this;
 				that.app.get({
@@ -123,24 +176,20 @@
 							touid:touid,
 							gid:gid
 						});
-					 
+						that.isFriend=res.data.isFriend;
 						that.list=list;
-						that.toUser=res.data.touser;
+						that.touser=res.data.touser;
 						that.user=res.data.user;
 						uni.setNavigationBarTitle({
-							title:"与"+res.data.touser.nickname+"聊天..."
+							title:res.data.touser.nickname
 						})
-						uni.closeSocket({
-							success:function(res){
-								
-							}
-						})
+						 
+						that.wsInit(); 
 						setTimeout(function(){
-							that.wsInit();
-						},600);
-						setTimeout(function(){
-							this.wsConn=true;
-						},600) 
+							that.wsConn=true;
+							
+						},300);
+						
 					}
 				})
 			},
@@ -149,13 +198,19 @@
 				var that=this;
 				
 				ws=uni.connectSocket({
-					url: chatClass.wsHost,
+					url: that.app.wsHost,
 					complete:function(res){
-						
+						 
+					},
+					fail:function(res){
+						uni.showToast({
+							title:"ws error"
+						})
 					}
 				});
 				ws.onOpen(function(res) {
 					
+					 
 					var msg = JSON.stringify({
 						type: "login",
 						k: uid,
@@ -167,7 +222,12 @@
 					});
 				});
 				ws.onError(function(res) {
-					
+					uni.showToast({
+						title:"ws error"
+					})
+					if(res=='1'){
+						ws.wsInit();
+					}
 					 
 					
 				});
@@ -183,14 +243,14 @@
 								gid:gid,
 								uid: res.wsclient_from,
 								touid:res.wsclient_to,
-								touserid:that.toUser.userid,
-								nickname:uid == res.wsclient_from ?that.user.nickname:that.toUser.nickname,
-								user_head:uid == res.wsclient_from ?that.user.user_head:that.toUser.user_head,
+								touserid:that.touser.userid,
+								nickname:uid == res.wsclient_from ?that.user.nickname:that.touser.nickname,
+								user_head:uid == res.wsclient_from ?that.user.user_head:that.touser.user_head,
 								content: res.content,
 								time: res.time,
 								isme: uid == res.wsclient_from ? true : false
 							}
-							console.log(json);
+							 
 							that.addMsg(json);
 							chatDb.add(json);
 							setTimeout(function() {
@@ -221,10 +281,10 @@
 						content="[img="+fileurl+"]"
 						break;
 					case "audio":
-						content="[audio=../../static/music.mp3]"
+						content="[audio="+fileurl+"]"
 						break;
 					case "video":
-						content="[video=../../static/movie.mp4]"
+						content="[video="+fileurl+"]"
 						break;
 					case "file":
 						content=fileurl.substring(fileurl.lastIndexOf("\/")+1) +" [file="+fileurl+"]";
@@ -243,20 +303,25 @@
 					content: content
 				});
 				
-				console.log("发送")
+				lastMsg=msg; 
 				ws.send({
 					data:msg
 				});
 				that.content="";
-				console.log(msg)
+				 
 			},
 			
 			choiceImg:function(){
 				//选择图片发送
 				var that=this;
-				console.log(that.app.apiHost)
+				inPage=true; 
 				uni.chooseImage({
+					sourceType:["album"],
+					fail:function(e){
+						inPage=false;
+					},
 					success:function(e){
+						inPage=false;
 						uni.uploadFile({
 							url: that.app.apiHost+"/index.php?m=upload&a=img&ajax=1&authcode="+that.app.getAuthCode(), //仅为示例，非真实的接口地址
 							filePath: e.tempFilePaths[0],
@@ -278,9 +343,13 @@
 			choiceFile:function(){
 				//选择图片发送
 				var that=this;
-				console.log(that.app.apiHost)
+				inPage=true;  
 				uni.chooseImage({
+					fail:function(e){
+						inPage=false;
+					},
 					success:function(e){
+						inPage=false;
 						uni.uploadFile({
 							url: that.app.apiHost+"/index.php?m=upload&a=upload&ajax=1&authcode="+that.app.getAuthCode(), //仅为示例，非真实的接口地址
 							filePath: e.tempFilePaths[0],
@@ -298,10 +367,125 @@
 						});
 					}
 				})
+			},
+			catchImg:function(){
+				var that=this;
+				inPage=true;  
+				uni.chooseImage({
+					fail:function(e){
+						inPage=false;
+					},
+					sourceType:["camera"],
+					success:function(e){
+						inPage=false;
+						uni.uploadFile({
+							url: that.app.apiHost+"/index.php?m=upload&a=img&ajax=1&authcode="+that.app.getAuthCode(), //仅为示例，非真实的接口地址
+							filePath: e.tempFilePaths[0],
+							name: 'upimg',
+							dataType:"json",
+						
+							success: (res) => {
+								if(!res.data.error){
+									var rs=JSON.parse(res.data);
+									if(!rs.data.error){
+										that.send("pic",rs.data.trueimgurl);
+									}
+								}
+							}
+						});
+					}
+				})
+			},
+			videoRecord:function(){
+				var that=this;
+				 
+				uni.chooseVideo({
+					count: 1,
+					success:function(e){
+						uni.uploadFile({
+							url: that.app.apiHost+"/index.php?m=upload&a=uploadmp4&ajax=1&authcode="+that.app.getAuthCode(), 
+							filePath: e.tempFilePath,
+							name: 'upimg',
+							dataType:"json",
+						
+							success: (res) => {
+								if(!res.data.error){
+									var rs=JSON.parse(res.data);
+									if(!rs.error){
+										that.send("video",rs.trueimgurl);
+									}
+								}
+							}
+						});
+					}
+				})
+			},
+			recordUpload:function(fileurl){
+				var that=this;
+				console.log(fileurl);
+				uni.uploadFile({
+					url: that.app.apiHost+"/index.php?m=upload&a=uploadmp4&ajax=1&authcode="+that.app.getAuthCode(), 
+					filePath: fileurl,
+					fileType:"audio",
+					name: 'upimg',
+					dataType:"json",
+				
+					success: (res) => {
+						if(!res.data.error){
+							var rs=JSON.parse(res.data);
+							if(!rs.error){
+								that.send("audio",rs.trueimgurl);
+							}
+						}
+					}
+				});
+			},
+			aRecordToggle:function(){
+				if(this.aRecordIng){
+					console.log("stop")
+					audioRecord.stop();
+					this.aRecordIng=false;
+				}else{
+					this.aRecordIng=true;
+					
+					audioRecord.start(aRecordOptions);
+				}
+				
+				
 			}
 		}
 	}
 </script>
 
 <style>
+	.add-friend-btn{
+		position: fixed;
+		bottom: 200px;
+		right: 3px;
+		background-color: #15ABA5;
+		color: #fff;
+		width: 30px;
+		height: 30px;
+		line-height: 30px;
+		border-radius: 20px;
+		text-align: center;
+		display: block;
+		cursor: pointer;
+	}
+	.aRecordBox{
+		z-index:9999;
+		width: 100px;
+		height: 100px;
+		border-radius: 50%;
+		background-color: #fff;
+		position: fixed;
+		bottom: 100px;
+		left:50%;
+		margin-left: -50px;
+		text-align: center;
+		display: block;
+	}
+	.f36:before{
+		font-size: 36px;
+	}
 </style>

@@ -1,4 +1,5 @@
 module.exports={
+	emoHost:"http://wss.deituicms.com/",
 	emoList:function(){
 		var arr=new Array();
 		for(var i=0;i<48;i++){
@@ -11,29 +12,27 @@ module.exports={
 		word= word.replace(/\s*/g,"");
 		var emlist=this.emoList();
 		for(var i=0;i<emlist.length;i++){
-			console.log(emlist[i]+'=='+word)
-			console.log(typeof(word));
-			if(emlist[i]==word){
-				console.log(i);
-				return i;
+			if(emlist[i]==word){			
+				return i; 
 			}
 		}
 		return -1;
 	},
 	decodeEmo:function(str){
-		var res=str.match(/(\\[^ ]*) /g);
+		var that=this;
+		var res=str.match(/(\\[^\s]+)\s/g);
 		
 		if(res!=null){
 			for(var i=0;i<res.length;i++){
 				var w=res[i].replace("\\","");
 				w=res[i].replace("\\","");				
-				var index=this.emoIndex(w);				
+				var index=this.emoIndex(w);
+				console.log(index);
 				if(index>=0){
-					str=str.replace(res[i],'<div class="imEmo-'+index+'"></div>');
+					str=str.replace(res[i],'<img src="'+that.emoHost+'/emo/jx2/'+(index+1)+'.gif" />');
 				}
 			}
 		}
-		console.log(str);
 		return str;
 	}
 }

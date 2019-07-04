@@ -51,11 +51,11 @@ export default({
 		}
 	},
 	onLoad:function(){
-		var stype=sessionStorage.getItem("sblog-index-type");
+		var stype=uni.getStorageSync("sblog-index-type");
 		if(stype){
 			this.type=stype;
 		}
-		var spage=sessionStorage.getItem("sblog-index-page");
+		var spage=uni.getStorageSync("sblog-index-page");
 		if(spage){
 			this.page=spage;
 		}
@@ -70,13 +70,13 @@ export default({
 		setType:function(type){
 			this.type=type;
 			
-			sessionStorage.setItem("sblog-index-type",type);
+			uni.setStorageSync("sblog-index-type",type);
 			if(type=='topic'){
 				this.page="topic";
-				sessionStorage.setItem("sblog-index-page","topic");
+				uni.setStorageSync("sblog-index-page","topic");
 			}else{
 				this.page="blog";
-				sessionStorage.setItem("sblog-index-page","blog");
+				uni.setStorageSync("sblog-index-page","blog");
 				this.getPage();
 			}
 			

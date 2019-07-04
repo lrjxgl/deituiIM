@@ -38,7 +38,7 @@
 			//匹配音乐
 			var patt = new RegExp(/\[([^=]*)=([^\]]*)\]/g,"g");
 			res=patt.exec(con);
-			console.log(res) 
+			 
 			if(res){
 				con=res[2];
 				// #ifdef H5
@@ -67,15 +67,15 @@
 		},
 		methods:{
 			playMusic:function(url){
-				console.log(url)
+				 
 				audioClass.play(url);
 			},
 			downFile:function(url){
 				uni.downloadFile({
-					url: url, //仅为示例，并非真实的资源
+					url: url, 
 					success: (res) => {
 						if (res.statusCode === 200) {
-							console.log('下载成功');
+							//console.log('下载成功');
 						}
 					}
 				});

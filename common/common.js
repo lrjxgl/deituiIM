@@ -2,6 +2,7 @@
 module.exports = {
 	apiHost:"https://www.fd175.com/",
 	appRoot:"https://www.fd175.com/uniapp/h5/", 
+	wsHost:"wss://wss.deituicms.com:8282", 
     json_add:function(a,b){
  
         if(a==undefined || a.length==0) return b;

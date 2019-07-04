@@ -6,6 +6,10 @@
 					<view class="input-flex-label">昵称</view>
 					<input class="input-flex-text" name="nickname"  :value="pageData.data.nickname" >
 				</view>
+				<div class="input-flex">
+					<div class="input-flex-label">简介</div>
+					<input class="input-flex-text" name="info" :value="pageData.data.info" />
+				</div>
 				<button form-type="submit" class="btn-row-submit">提交</button>
 			</form>
  		</view>

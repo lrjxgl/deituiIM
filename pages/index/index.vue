@@ -5,13 +5,27 @@
 			 
 			<block v-if="indexList.length>0">
 			<div v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
-				<image class="wh-40 mgr-10" :src="item.user_head+'.100x100.jpg'"></image>
-				<div class="flex-1">
-					<div class="cl1 mgb-5" v-if="item.gid!=0">{{item.gid}}</div>
-					<div class="cl1 mgb-5" v-else>{{item.nickname}}</div>
-					 
-					<chat-msg :content="item.content"></chat-msg>
-				</div>
+				<block v-if="item.gid==0">
+					<image class="wh-40 mgr-10" :src="item.user_head+'.100x100.jpg'"></image>
+					<div class="flex-1">
+						 
+						<div class="cl1 mgb-5">{{item.nickname}}</div>
+						 
+						<chat-msg :content="item.content"></chat-msg>
+					</div>
+				</block>
+				<block v-else>
+					<image   class="wh-40 mgr-10" :src="item.imgurl+'.100x100.jpg'"></image>
+					<div class="flex-1">
+						 
+						<div class="cl1 mgb-5" >{{item.appGroupTitle}}</div>
+						 
+						<chat-msg :content="item.content"></chat-msg>
+					</div>
+				</block>
+				
+				
+				
 				<div class="cl3">{{item.time}}</div>
 			</div>
 			</block>
@@ -26,7 +40,7 @@
 </template>
 
 <script>
-	import uu from "../../common/userlist.js";
+	 
 	import mtFooter from "../../components/footer.vue";
 	import chatDb from "../../common/chatdb.js";
 	 
@@ -70,7 +84,7 @@
 			goItem:function(item){
 				if(item.gid!=0 || item.gid!=""){
 					uni.navigateTo({
-						url:"chat?gid="+item.gid
+						url:"chat?groupid="+item.appGroupId
 					})
 				}else{
 					uni.navigateTo({

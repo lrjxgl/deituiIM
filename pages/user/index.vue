@@ -5,7 +5,7 @@
 				<image @click="goHead" class="wh-60 mgr-5 bd-radius-50" :src="pageData.user.user_head+'.100x100.jpg'" />
 				<div class="flex-1">
 					<div class="f16 cl1 mgb-5">{{pageData.user.nickname}}</div>
-					<div class="flex flex-ai-center cl2"> 发布信息&nbsp;&nbsp;<text class="cl-num">{{pageData.topic_num}}</text>&nbsp;&nbsp;条</div>
+					<div class="flex flex-ai-center cl2"> {{pageData.user.info}}</div>
 				</div>
 
 			</div>
@@ -39,15 +39,7 @@
 			</div>
 
 		</div>
-		<div class="footer-row"></div>
-		<div class="footer">
-			<div class="footer-item icon-home footer-active" @click="gourl('../sblog/index')" >首页</div>
-		
-			<div class="footer-item footer-add "  @click="gourl('../sblog_blog/add')">
-				发布</div>
-			
-			<div class="footer-item icon-my_light "   @click="gourl('../sblog_user/index')">我的</div>
-		</div>
+	 
 		<mt-footer tab="user"></mt-footer>
 	</div>
 </template>

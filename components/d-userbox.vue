@@ -52,6 +52,10 @@
 							}else{
 								that.followStr="已关注";
 							}
+						}else{
+							uni.showToast({
+								title:res.data.message
+							})
 						}
 					}
 				})

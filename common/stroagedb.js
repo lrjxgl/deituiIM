@@ -47,7 +47,7 @@ module.exports=function(){
 					
 				}
 			}
-			console.log(arr);
+			 
 			return arr;
 		},
 		insert:function(msg){
