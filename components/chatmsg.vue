@@ -11,6 +11,9 @@
 			<div v-if="item.type=='file'">
 				<div @click="downFile(item.src)" class="iconfont icon-file f20"></div>
 			</div>
+			<div v-if="item.type=='gift'">
+				<div @click="getGift(item.src)" class="flex flex-ai-center">收到神秘礼物&nbsp;<text class="iconfont animated animated-rotateIn slower infinite cl-red icon-present f20"></text></div>
+			</div>
 			<div v-else >
 				<rich-text class="flex" :nodes="item.content"></rich-text>
 			</div>
@@ -41,15 +44,6 @@
 			 
 			if(res){
 				con=res[2];
-				// #ifdef H5
-				con=con.replace(/\.\.\/\.\.\//g,"./");
-				// #endif
-				// #ifdef APP-PLUS
-				con=con.replace(/\.\.\/\.\.\//g,"/");
-				// #endif
-				// #ifdef MP-WEIXIN
-				con=con.replace(/\.\.\/\.\.\//g,"/");
-				// #endif
 				
 				this.nodes=[{
 					type:res[1],
@@ -79,6 +73,9 @@
 						}
 					}
 				});
+			},
+			getGift:function(giftid){
+				this.$emit("call-parent",{type:"gift",giftid:giftid})
 			}
 		}
 	}

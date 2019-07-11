@@ -20,8 +20,9 @@ module.exports={
 	},
 	decodeEmo:function(str){
 		var that=this;
+		str+=" ";
 		var res=str.match(/(\\[^\s]+)\s/g);
-		
+		console.log(str);
 		if(res!=null){
 			for(var i=0;i<res.length;i++){
 				var w=res[i].replace("\\","");

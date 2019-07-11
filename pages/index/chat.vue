@@ -169,11 +169,12 @@
 						uni.setNavigationBarTitle({
 							title:res.data.group.title
 						})
-						
+						/*
 						var list=chatDb.msgList({
 							gid:gid
 						});
-						that.list=list;
+						*/
+						that.list=res.data.list;
 						that.wsInit();
 						setTimeout(function(){
 							that.wsConn=true;
@@ -231,7 +232,7 @@
 							}
 							 
 							that.addMsg(json);
-							chatDb.addGroup(json);
+							//chatDb.addGroup(json);
 							setTimeout(function() {
 								uni.pageScrollTo({
 									scrollTop: 1000000
@@ -285,8 +286,23 @@
 				ws.send({
 					data:msg
 				});
+				that.saveHost(content);
 				that.content="";
 				 
+			},
+			saveHost:function(content){
+				var that=this;
+				that.app.post({
+					url:that.app.apiHost+"/module.php?m=im_group_msg&a=save",
+					data:{
+						groupid:that.group.groupid,
+						content:content
+					},
+					success:function(res){
+						console.log(res)
+					}
+					
+				})
 			},
 			choiceImg:function(){
 				//选择图片发送

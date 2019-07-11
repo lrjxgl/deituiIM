@@ -18,7 +18,7 @@
 					<image   class="wh-40 mgr-10" :src="item.imgurl+'.100x100.jpg'"></image>
 					<div class="flex-1">
 						 
-						<div class="cl1 mgb-5" >{{item.appGroupTitle}}</div>
+						<div class="cl1 mgb-5" >{{item.title}}</div>
 						 
 						<chat-msg :content="item.content"></chat-msg>
 					</div>
@@ -65,7 +65,8 @@
 				});
 				return false;
 			} 
-			this.indexList=chatDb.indexList();
+			//this.indexList=chatDb.indexList();
+			this.pmList();
 			setTimeout(function(){
 				this.isload=true;
 			},1000)
@@ -84,13 +85,22 @@
 			goItem:function(item){
 				if(item.gid!=0 || item.gid!=""){
 					uni.navigateTo({
-						url:"chat?groupid="+item.appGroupId
+						url:"chat?groupid="+item.groupid
 					})
 				}else{
 					uni.navigateTo({
 						url:"pm?uuid="+item.touserid
 					})
 				}
+			},
+			pmList:function(){
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=im_msg_index",
+					success:function(res){
+						that.indexList=res.data.list;
+					}
+				})
 			}
 		}
 	}
