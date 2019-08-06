@@ -19,13 +19,13 @@ a{
 .iconfont:before{
 	line-height: 1.5;
 }
-view,div{
+view{
 	color: #323232;
 	box-sizing: border-box;
 	font-size: 33.6upx;
 }
 
-view,div{
+view{
 	display: flex;
 	flex-direction: column;
 	color: #323232;

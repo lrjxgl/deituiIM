@@ -1,12 +1,12 @@
 <template>
-	<div>
-		<div @click="$emit('call-parent')" class="modal-mask"></div>
-		<div class="agiftBox flex-col flex-jc-center">
+	<view>
+		<view @click="$emit('call-parent')" class="modal-mask"></view>
+		<view class="agiftBox flex-col flex-jc-center">
 			<image class="agiftBox-img animated zoomIn" :src="gift.imgurl"></image>
-			<div class="agiftBox-content">{{gift.description}}</div>
-		</div>
+			<view class="agiftBox-content">{{gift.description}}</view>
+		</view>
 		
-	</div>
+	</view>
 </template>
 
 <script>

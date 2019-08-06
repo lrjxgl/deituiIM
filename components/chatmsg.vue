@@ -1,25 +1,25 @@
 <template>
-	<div>
-		<div  v-for="(item,index) in nodes" :key="index">
-			<div v-if="item.type=='audio'" @click="playMusic(item.src)"><div class="iconfont f20 icon-video_light"></div></div>
-			<div v-if="item.type=='video'">
+	<view>
+		<view  v-for="(item,index) in nodes" :key="index">
+			<view v-if="item.type=='audio'" @click="playMusic(item.src)"><view class="iconfont f20 icon-video_light"></view></view>
+			<view v-if="item.type=='video'">
 				<video show-fullscreen-btn="true" controls="true"  class="w2-1"   :src="item.src"></video>
-			</div>
-			<div v-if="item.type=='img'">
+			</view>
+			<view v-if="item.type=='img'">
 				<image :src="item.src" mode="widthFix" class="w100"></image>
-			</div>
-			<div v-if="item.type=='file'">
-				<div @click="downFile(item.src)" class="iconfont icon-file f20"></div>
-			</div>
-			<div v-if="item.type=='gift'">
-				<div @click="getGift(item.src)" class="flex flex-ai-center">收到神秘礼物&nbsp;<text class="iconfont animated animated-rotateIn slower infinite cl-red icon-present f20"></text></div>
-			</div>
-			<div v-else >
+			</view>
+			<view v-if="item.type=='file'">
+				<view @click="downFile(item.src)" class="iconfont icon-file f20"></view>
+			</view>
+			<view v-if="item.type=='gift'">
+				<view @click="getGift(item.src)" class="flex flex-ai-center">收到神秘礼物&nbsp;<text class="iconfont animated animated-rotateIn slower infinite cl-red icon-present f20"></text></view>
+			</view>
+			<view v-else >
 				<rich-text class="flex" :nodes="item.content"></rich-text>
-			</div>
+			</view>
 			
-		</div>
-	</div>
+		</view>
+	</view>
 </template>
 
 <script>

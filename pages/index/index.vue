@@ -1,42 +1,42 @@
 <template>
-	<div>
-		<div class="main-body">
+	<view>
+		<view class="main-body">
 			
 			 
 			<block v-if="indexList.length>0">
-			<div v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
+			<view v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
 				<block v-if="item.gid==0">
 					<image class="wh-40 mgr-10" :src="item.user_head+'.100x100.jpg'"></image>
-					<div class="flex-1">
+					<view class="flex-1">
 						 
-						<div class="cl1 mgb-5">{{item.nickname}}</div>
+						<view class="cl1 mgb-5">{{item.nickname}}</view>
 						 
 						<chat-msg :content="item.content"></chat-msg>
-					</div>
+					</view>
 				</block>
 				<block v-else>
 					<image   class="wh-40 mgr-10" :src="item.imgurl+'.100x100.jpg'"></image>
-					<div class="flex-1">
+					<view class="flex-1">
 						 
-						<div class="cl1 mgb-5" >{{item.title}}</div>
+						<view class="cl1 mgb-5" >{{item.title}}</view>
 						 
 						<chat-msg :content="item.content"></chat-msg>
-					</div>
+					</view>
 				</block>
 				
 				
 				
-				<div class="cl3">{{item.time}}</div>
-			</div>
+				<view class="cl3">{{item.time}}</view>
+			</view>
 			</block>
 			<block v-else>
-				<div class="emptyData">还没消息，快去找人聊聊吧</div>
+				<view class="emptyData">还没消息，快去找人聊聊吧</view>
 			</block>
 			
 			
-		</div>
+		</view>
 		<mt-footer tab="index"></mt-footer>
-	</div>
+	</view>
 </template>
 
 <script>
@@ -59,6 +59,7 @@
 			}
 		},
 		onLoad() {
+			var that=this;
 			if(!this.app.isLogin()){
 				uni.reLaunch({
 					url:"../login/index"
@@ -68,13 +69,13 @@
 			//this.indexList=chatDb.indexList();
 			this.pmList();
 			setTimeout(function(){
-				this.isload=true;
+				that.isLoad=true;
 			},1000)
 			
 		},
 		onShow(){
 			if(this.isLoad){
-				this.indexList=chatDb.indexList();
+				this.pmList();
 			}
 			
 		},

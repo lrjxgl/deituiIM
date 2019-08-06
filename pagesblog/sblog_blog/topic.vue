@@ -1,24 +1,24 @@
 <template>
-	<div>
-		<div class="sglist">
+	<view>
+		<view class="sglist">
 			 
-			<div v-for="(item,index) in pageData.list" :key="index" @click="goBlog(item.id)" class="sglist-item">
+			<view v-for="(item,index) in pageData.list" :key="index" @click="goBlog(item.id)" class="sglist-item">
 				
-				<div class="sglist-title block" v-html="item.parsecontent"></div>
-				<div class="sglist-imglist">
+				<view class="sglist-title block" v-html="item.parsecontent"></view>
+				<view class="sglist-imglist">
 					 
 					<img v-for="(img,imgIndex) in item.imgslist" :key="imgIndex" :src="img+'.100x100.jpg'" class="sglist-imglist-img" />
 					
-				</div>
-				<div class="sglist-ft">
-					<div class="sglist-ft-love">{{item.love_num}}</div>
-					<div class="sglist-ft-cm">{{item.comment_num}}</div>
-					<div class="sglist-ft-view">{{item.view_num}}</div>
-				</div> 
-			</div>
+				</view>
+				<view class="sglist-ft">
+					<view class="sglist-ft-love">{{item.love_num}}</view>
+					<view class="sglist-ft-cm">{{item.comment_num}}</view>
+					<view class="sglist-ft-view">{{item.view_num}}</view>
+				</view> 
+			</view>
 			
-		</div>
-	</div>
+		</view>
+	</view>
 </template>
 
 <script>

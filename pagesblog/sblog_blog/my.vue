@@ -1,28 +1,28 @@
 <template>
-	<div class="main-body" id="app">
+	<view class="main-body" id="app">
 		 
-		<div class="sglist">
+		<view class="sglist">
 			 
-			<div v-for="(item,index) in pageData.list" :key="index"  class="sglist-item">
+			<view v-for="(item,index) in pageData.list" :key="index"  class="sglist-item">
 				
-				<div @click="goBlog(item.id)" class="sglist-title flex" v-html="item.content"></div>
-				<div @click="goBlog(item.id)" class="sglist-imglist">
+				<view @click="goBlog(item.id)" class="sglist-title flex" v-html="item.content"></view>
+				<view @click="goBlog(item.id)" class="sglist-imglist">
 					 
 					<img v-for="(img,imgIndex) in item.imgslist" :key="imgIndex" :src="img+'.100x100.jpg'" class="sglist-imglist-img" />
 					
-				</div>
-				<div class="sglist-ft">
-					<div class="sglist-ft-love">{{item.love_num}}</div>
-					<div class="sglist-ft-cm">{{item.comment_num}}</div>
-					<div class="sglist-ft-view">{{item.view_num}}</div>
-					<div @click="del(item.id)" class="flex-1 cl-danger iconfont pointer icon-delete"></div>
-				</div>
+				</view>
+				<view class="sglist-ft">
+					<view class="sglist-ft-love">{{item.love_num}}</view>
+					<view class="sglist-ft-cm">{{item.comment_num}}</view>
+					<view class="sglist-ft-view">{{item.view_num}}</view>
+					<view @click="del(item.id)" class="flex-1 cl-danger iconfont pointer icon-delete"></view>
+				</view>
 				
-			</div>
+			</view>
 			
-		</div>
+		</view>
 		
-	</div>
+	</view>
 </template>
 
 <script>

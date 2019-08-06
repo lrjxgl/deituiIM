@@ -1,83 +1,83 @@
 <template>
-	<div>
-		<div class="main">
+	<view>
+		<view class="main">
 
 			<scroll-view :scroll-top="scrollTop" scroll-y="true" @scrolltoupper="scTop" @scroll="scrollY" class="scroll-list pd-10 bg-fff">
 				<template v-if="list.length>0">
-					<div v-for="(item,index) in list" :key="index">
-						<div class="chatbox" v-if="item.isme">
-							<div class="flex-1"></div>
-							<div class="chatbox-desc-b">
+					<view v-for="(item,index) in list" :key="index">
+						<view class="chatbox" v-if="item.isme">
+							<view class="flex-1"></view>
+							<view class="chatbox-desc-b">
 							<chat-msg v-on:call-parent="chatMsgEven" :content="item.content"></chat-msg>
-							</div>
+							</view>
 							<image :src="user.user_head+'.100x100.jpg'" class="wh-40 mgl-10"></image>
-						</div>
-						<div class="chatbox" v-else>
+						</view>
+						<view class="chatbox" v-else>
 							<image :src="touser.user_head+'.100x100.jpg'" class="wh-40 mgr-10"></image>
-							<div class="flex-1">
-								<div class="chatbox-desc-a">
+							<view class="flex-1">
+								<view class="chatbox-desc-a">
 								<chat-msg :content="item.content"></chat-msg>
-								</div>
-							</div>
-						</div>
+								</view>
+							</view>
+						</view>
 
-					</div>
+					</view>
 				</template>
 				<template v-else>
-					<div class="emptyData">暂无消息</div>
+					<view class="emptyData">暂无消息</view>
 				</template>
 			</scroll-view>
 
-			<div class="fixFoot-row"></div>
-			<div class="fixFoot bg-fff pdb-5">
-				<div class="input-flex">
+			<view class="fixFoot-row"></view>
+			<view class="fixFoot bg-fff pdb-5">
+				<view class="input-flex">
 					<input class="input-flex-text" v-model="content" type="text">
-					<div class="input-flex-btn w60" @click="send('content')">发送</div>
-				</div>
-				<div class="flex flex-center">
+					<view class="input-flex-btn w60" @click="send('content')">发送</view>
+				</view>
+				<view class="flex flex-center">
 					<!-- #ifndef H5 -->
-					<div @click="aRecordClass='flex-col'" class="flex-1 iconfont icon-voicefill f20"></div>
+					<view @click="aRecordClass='flex-col'" class="flex-1 iconfont icon-voicefill f20"></view>
 					<!-- #endif -->
-					<div @click="choiceImg('pic')" class="flex-1 iconfont icon-pic f20 sendPic"></div>
+					<view @click="choiceImg('pic')" class="flex-1 iconfont icon-pic f20 sendPic"></view>
 					<!-- #ifndef H5 -->
-					<div @click="catchImg('pic')" class="flex-1 iconfont icon-camera f20 sendPic"></div>
+					<view @click="catchImg('pic')" class="flex-1 iconfont icon-camera f20 sendPic"></view>
 					<!-- #endif -->
 					<!-- #ifndef H5 -->
-					<div @click="videoRecord('video')" class="flex-1 iconfont icon-recordlight f20"></div>
+					<view @click="videoRecord('video')" class="flex-1 iconfont icon-recordlight f20"></view>
 					<!-- #endif -->
-					<div @click="emoClass='flex-col'" class="flex-1 iconfont icon-emoji f20"></div>
-					<div @click="choiceFile('file')" class="flex-1 iconfont none icon-file f20 "></div>
-					<div @click="showGift" class="flex-1 iconfont icon-present f20"></div>
-				</div>
+					<view @click="emoClass='flex-col'" class="flex-1 iconfont icon-emoji f20"></view>
+					<view @click="choiceFile('file')" class="flex-1 iconfont none icon-file f20 "></view>
+					<view @click="showGift" class="flex-1 iconfont icon-present f20"></view>
+				</view>
 
-			</div>
-			<div id="emoModal" :class="emoClass" class="modal-group">
-				<div class="modal-mask" @click="emoClass=''"></div>
-				<div class="emoFixbox">
+			</view>
+			<view id="emoModal" :class="emoClass" class="modal-group">
+				<view class="modal-mask" @click="emoClass=''"></view>
+				<view class="emoFixbox">
 
-					<div class="pd-10">
-						<div class="flex flex-wrap">
-							<div @click="addEmo(item)" class="imEmo" :class="'imEmo-'+index" v-for="(item,index) in emoList" :key="index"></div>
-						</div>
-					</div>
-				</div>
-			</div>
+					<view class="pd-10">
+						<view class="flex flex-wrap">
+							<view @click="addEmo(item)" class="imEmo" :class="'imEmo-'+index" v-for="(item,index) in emoList" :key="index"></view>
+						</view>
+					</view>
+				</view>
+			</view>
 			<el-gift v-if="giftShow" v-on:call-parent="sendGifts" ></el-gift>
 			<gift-animate v-on:call-parent="agiftShow=false"  v-if="agiftShow" :gift="agift"></gift-animate>
-			<div v-if="isFriend==0" @click="addFriend(touser.userid)" class="add-friend-btn iconfont icon-friend_add_light"></div>
-			<div class="modal-group" :class="aRecordClass">
-				<div class="modal-mask" @click="aRecordClass=''"></div>
+			<view v-if="isFriend==0" @click="addFriend(touser.userid)" class="add-friend-btn iconfont icon-friend_add_light"></view>
+			<view class="modal-group" :class="aRecordClass">
+				<view class="modal-mask" @click="aRecordClass=''"></view>
 
-				<div @click="aRecordToggle" class="aRecordBox">
-					<div :class="{'aRecord-active':aRecordIng}" class="iconfont icon-voice f36"></div>
-					<div v-if="aRecordIng">点击结束</div>
-					<div v-else>点击录音</div>
-				</div>
+				<view @click="aRecordToggle" class="aRecordBox">
+					<view :class="{'aRecord-active':aRecordIng}" class="iconfont icon-voice f36"></view>
+					<view v-if="aRecordIng">点击结束</view>
+					<view v-else>点击录音</view>
+				</view>
 
-			</div>
+			</view>
 
-		</div>
-	</div>
+		</view>
+	</view>
 </template>
 
 <script>

@@ -1,15 +1,15 @@
 <template>
-	<div>
+	<view>
 		<page-loading v-if="loadIng"></page-loading> 
 		<scroll-view :scroll-top="scrollTop" scroll-y="true" @scrolltoupper="scTop" @scroll="scrollY" class="scroll">
 			 
 				
-			<div v-for="(item,index) in list" :key="index">
+			<view v-for="(item,index) in list" :key="index">
 				{{item}}
-			</div>
+			</view>
 			 
 		</scroll-view>
-	</div>
+	</view>
 </template>
 
 <script>

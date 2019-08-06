@@ -1,37 +1,38 @@
 <template>
-	<div>
-		<div class="tabs-border mgb-5">
-			<div @click="setType('')" :class="{'tabs-border-active':type==''}" class="tabs-border-item">推荐</div>
-			<div @click="setType('hot')" :class="{'tabs-border-active':type=='hot'}" class="tabs-border-item">最热</div>
-			<div @click="setType('new')" :class="{'tabs-border-active':type=='new'}" class="tabs-border-item">最新</div>
-			<div @click="setType('topic')" :class="{'tabs-border-active':type=='topic'}"  class="tabs-border-item">话题</div>
+	<view>
+		<view class="tabs-border mgb-5">
+			<view @click="setType('')" :class="{'tabs-border-active':type==''}" class="tabs-border-item">关注</view>
+			<view @click="setType('hot')" :class="{'tabs-border-active':type=='hot'}" class="tabs-border-item">推荐</view>
+			<view @click="setType('new')" :class="{'tabs-border-active':type=='new'}" class="tabs-border-item">最新</view>
+			<view @click="setType('topic')" :class="{'tabs-border-active':type=='topic'}"  class="tabs-border-item">话题</view>
 			
-		</div>
+		</view>
 		
-		<div v-if="page=='blog'" style="display: none;" :class="'flex-col'" class="sglist">
-			 
-			<div v-for="(item,index) in pageData.list" :key="index" @click="goBlog(item.id)" class="sglist-item">
+		<view v-if="page=='blog'" style="display: none;" :class="'flex-col'" class="sglist">
+			<view class="emptyData" v-if="pageData.rscount==0" >暂无帖子</view> 
+			<view v-for="(item,index) in pageData.list" :key="index" @click="goBlog(item.id)" class="sglist-item">
 				
-				<div class="sglist-title block" v-html="item.content"></div>
-				<div class="sglist-imglist">
+				<view class="sglist-title block" v-html="item.content"></view>
+				<view class="sglist-imglist">
 					 
 					<img v-for="(img,imgIndex) in item.imgslist" :key="imgIndex" :src="img+'.100x100.jpg'" class="sglist-imglist-img" />
 					
-				</div>
-				<div class="sglist-ft">
-					<div class="sglist-ft-love">{{item.love_num}}</div>
-					<div class="sglist-ft-cm">{{item.comment_num}}</div>
-					<div class="sglist-ft-view">{{item.view_num}}</div>
-				</div> 
-			</div>
-			<div @click="getList" v-if="per_page>0" class="loadMore">点我加载更多...</div>
-		</div>
-		<div  v-if="page=='topic'" class="blogList">
-			<div @click="goTopic(item.title)" class="blogList-item" v-for="(item,index) in pageData.topicList" :key="index">{{item.title}}</div>
+				</view>
+				<view class="sglist-ft">
+					<view class="sglist-ft-love">{{item.love_num}}</view>
+					<view class="sglist-ft-cm">{{item.comment_num}}</view>
+					<view class="sglist-ft-view">{{item.view_num}}</view>
+				</view> 
+			</view>
+			<view @click="getList" v-if="per_page>0" class="loadMore">点我加载更多...</view>
+		</view>
+		<view  v-if="page=='topic'" class="blogList">
+			<view @click="goTopic(item.title)" class="blogList-item" v-for="(item,index) in pageData.topicList" :key="index">{{item.title}}</view>
 			
-		</div>
+		</view>
+		<navigator :url="'../sblog_blog/add'" class="fixedAdd">发布</navigator>
 		<mt-footer tab="sblog"></mt-footer>
-	</div>
+	</view>
 </template>
 
 <script>

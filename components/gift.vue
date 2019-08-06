@@ -1,14 +1,14 @@
 <template>
-	<div id="giftModal" :class="giftModalClass" class="modal-group">
-		<div class="modal-mask" @click="giftModalClass=''"></div>
-		<div class="giftFixbox">
-			<div @click="sendGift(item)" v-for="(item,index) in giftList" :key="index" class="giftItem">
+	<view id="giftModal" :class="giftModalClass" class="modal-group">
+		<view class="modal-mask" @click="giftModalClass=''"></view>
+		<view class="giftFixbox">
+			<view @click="sendGift(item)" v-for="(item,index) in giftList" :key="index" class="giftItem">
 				<image mode="widthFix" :src="item.imgurl+'.100x100.jpg'" class="giftItem-img"></image>
-				<div class="giftItem-title">{{item.title}}</div>
-				<div class="giftItem-price">￥{{item.price}}</div>
-			</div>
-		</div>
-	</div>
+				<view class="giftItem-title">{{item.title}}</view>
+				<view class="giftItem-price">￥{{item.price}}</view>
+			</view>
+		</view>
+	</view>
 </template>
 
 <script>

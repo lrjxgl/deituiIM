@@ -1,37 +1,37 @@
 <template>
-	<div>
-		<div>
-			<div v-for="(item,index) in groupList" :key="index" class="flexlist-item">
+	<view>
+		<view>
+			<view v-for="(item,index) in groupList" :key="index" class="flexlist-item">
 				<img :src="item.imgurl" class="flexlist-img" />
-				<div class="flex-1">
-					<div class="cl1 mgb-5">{{item.title}}</div>
-					<div class="cl2">{{item.description}}</div>
-				</div>
+				<view class="flex-1">
+					<view class="cl1 mgb-5">{{item.title}}</view>
+					<view class="cl2">{{item.description}}</view>
+				</view>
 				
-				<div class="flex-jc-center" >
-					<div  @click="goChat(item.groupid)" class="btn-mini">聊聊</div>
+				<view class="flex-jc-center" >
+					<view  @click="goChat(item.groupid)" class="btn-mini">聊聊</view>
 					 
-				</div>
-			</div>
-		</div>
-		<div>
+				</view>
+			</view>
+		</view>
+		<view>
 			
 			
-			<div v-for="(item,index) in userList" :key="index" class="flexlist-item">
+			<view v-for="(item,index) in userList" :key="index" class="flexlist-item">
 				<img :src="item.user_head+'.100x100.jpg'" class="flexlist-img" />
-				<div class="flex-1">
-					<div class="cl1 mgb-5">{{item.nickname}}</div>
-					<div class="cl2">{{item.description}}</div>
-				</div>
+				<view class="flex-1">
+					<view class="cl1 mgb-5">{{item.nickname}}</view>
+					<view class="cl2">{{item.description}}</view>
+				</view>
 				
-				<div class="flex-jc-center" >
-					<div  @click="goPm(item.userid)" class="btn-mini">聊聊</div>
+				<view class="flex-jc-center" >
+					<view  @click="goPm(item.userid)" class="btn-mini">聊聊</view>
 					 
-				</div>
-			</div>
-		</div>
+				</view>
+			</view>
+		</view>
 		<mt-footer tab="match"></mt-footer>
-	</div>
+	</view>
 </template>
 
 <script>

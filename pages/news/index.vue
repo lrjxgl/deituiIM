@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<view>
 		<mt-footer tab="news"></mt-footer>
-	</div>
+	</view>
 </template>
 
 <script>

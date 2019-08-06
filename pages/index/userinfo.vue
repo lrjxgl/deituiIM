@@ -1,9 +1,9 @@
 <template>
-	<div>
-		<div class="flex">
+	<view>
+		<view class="flex">
 			
-		</div>
-	</div>
+		</view>
+	</view>
 </template>
 
 <script>

@@ -27,7 +27,7 @@
 		},{
 			"path":"pages/contact/index",
 			"style": {
-				"navigationBarTitleText": "联系人"
+				"navigationBarTitleText": "通讯录"
 			}
 		},{
 			"path":"pages/user/index",
@@ -100,7 +100,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "deituiIM",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	}
