@@ -1,22 +1,25 @@
 <template>
-	<view>
+	<view class="w1">
 		<view  v-for="(item,index) in nodes" :key="index">
-			<view v-if="item.type=='audio'" @click="playMusic(item.src)"><view class="iconfont f20 icon-video_light"></view></view>
-			<view v-if="item.type=='video'">
+			<block v-if="item.type=='audio'" @click="playMusic(item.src)"><view class="iconfont f20 icon-video_light"></view></block>
+			<block v-if="item.type=='video'">
 				<video show-fullscreen-btn="true" controls="true"  class="w2-1"   :src="item.src"></video>
-			</view>
-			<view v-if="item.type=='img'">
+			</block>
+			<block v-if="item.type=='img'">
 				<image :src="item.src" mode="widthFix" class="w100"></image>
-			</view>
-			<view v-if="item.type=='file'">
+			</block>
+			<block v-if="item.type=='file'">
 				<view @click="downFile(item.src)" class="iconfont icon-file f20"></view>
-			</view>
-			<view v-if="item.type=='gift'">
-				<view @click="getGift(item.src)" class="flex flex-ai-center">收到神秘礼物&nbsp;<text class="iconfont animated animated-rotateIn slower infinite cl-red icon-present f20"></text></view>
-			</view>
-			<view v-else >
+			</block>
+			<block v-if="item.type=='gift'">
+				<view @click="getGift(item.src)" class="text-center">
+					<text class="iconfont animated animated-rotateIn slower infinite cl-red icon-present f20"></text>
+					<view>收到神秘礼物</view>
+					</view>
+			</block>
+			<block v-else >
 				<rich-text class="flex" :nodes="item.content"></rich-text>
-			</view>
+			</block>
 			
 		</view>
 	</view>
@@ -82,6 +85,9 @@
 </script>
 
 <style>
+	.w1{
+		width: 100%;
+	}
 	.w2-1{
 		width: 160px;
 		height: 100px;

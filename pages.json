@@ -6,6 +6,8 @@
 				"navigationBarTitleText": "deituiIM"
 			}
 		},{
+			"path":"pages/livepusher/index"
+		},{
 			"path":"pages/login/index"
 		},{
 			"path":"pages/login/findpwd"
@@ -75,6 +77,12 @@
 			}
 		},{
 			"path":"pages/test/index"
+		},{
+			"path":"pages/gold/buy"
+		},{
+			"path":"pages/friend_apply/index","style":{
+				"navigationBarTitleText":"新朋友"
+			}
 		}
 		
 	],

@@ -6,7 +6,7 @@
 			<block v-if="indexList.length>0">
 			<view v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
 				<block v-if="item.gid==0">
-					<image class="wh-40 mgr-10" :src="item.user_head+'.100x100.jpg'"></image>
+					<image class="wh-40 mgr-10 bd-radius-10" :src="item.user_head+'.100x100.jpg'"></image>
 					<view class="flex-1">
 						 
 						<view class="cl1 mgb-5">{{item.nickname}}</view>
@@ -15,7 +15,7 @@
 					</view>
 				</block>
 				<block v-else>
-					<image   class="wh-40 mgr-10" :src="item.imgurl+'.100x100.jpg'"></image>
+					<image   class="wh-40 mgr-10 bd-radius-10" :src="item.imgurl+'.100x100.jpg'"></image>
 					<view class="flex-1">
 						 
 						<view class="cl1 mgb-5" >{{item.title}}</view>

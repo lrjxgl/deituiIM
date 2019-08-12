@@ -6,7 +6,7 @@
 				<image src="https://www.fd175.com/static/logo.png" class="wh-60"></image>
 			</view>
 		</view>
-		<form class="loginBox"  id="login-form" @submit="formSubmit" >
+		<form autocomplete="off" class="loginBox"  id="login-form" @submit="formSubmit" >
 			<view class="flexIcon">
       	<view class="flexIcon-icon iconfont icon-phone_light"></view>
         <input type="text"  placeholder-class="cl-white" class="flexIcon-text"  name="telephone" placeholder="请输入手机号码" />

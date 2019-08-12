@@ -2,6 +2,9 @@
 	<view>
 		<view class="main-body">
 			<view >
+				<view @click="gourl('../friend_apply/index')" class="row-item bg-white">
+					<view class="row-item-title">新朋友</view>
+				</view>
 				<view v-for="(item,name,index) in list" :key="index">
 					<view :id="'zms'+name" class="f16 pd-10 zms">{{name}}</view>
 					<view class="row-box">
@@ -55,6 +58,11 @@
 			}
 		},
 		methods: {
+			gourl:function(url){
+				uni.navigateTo({
+					url:url
+				})
+			},
 			goPm:function(uid){
 				uni.navigateTo({
 					url:"../index/pm?uuid="+uid

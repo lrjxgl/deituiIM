@@ -1,19 +1,19 @@
 <template>
 	<view>
-		<view class="main">
-
-			<scroll-view :scroll-top="scrollTop" scroll-y="true" @scrolltoupper="scTop" @scroll="scrollY" class="scroll-list pd-10 bg-fff">
+		<view class="main" id="main">
+			<page-loading v-if="loadIng"></page-loading>
+			<view class=" pd-10 bg-fff">
 				<template v-if="list.length>0">
-					<view v-for="(item,index) in list" :key="index">
+					<view v-for="(item,index) in list" :xx="index" :id="item.id" :key="time+'.'+item.id">
 						<view class="chatbox" v-if="item.isme">
 							<view class="flex-1"></view>
 							<view class="chatbox-desc-b">
 							<chat-msg v-on:call-parent="chatMsgEven" :content="item.content"></chat-msg>
 							</view>
-							<image :src="user.user_head+'.100x100.jpg'" class="wh-40 mgl-10"></image>
+							<image :src="user.user_head+'.100x100.jpg'" class="wh-40 mgl-10 bd-radius-10"></image>
 						</view>
 						<view class="chatbox" v-else>
-							<image :src="touser.user_head+'.100x100.jpg'" class="wh-40 mgr-10"></image>
+							<image :src="touser.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
 							<view class="flex-1">
 								<view class="chatbox-desc-a">
 								<chat-msg :content="item.content"></chat-msg>
@@ -26,7 +26,7 @@
 				<template v-else>
 					<view class="emptyData">暂无消息</view>
 				</template>
-			</scroll-view>
+			</view>
 
 			<view class="fixFoot-row"></view>
 			<view class="fixFoot bg-fff pdb-5">
@@ -64,7 +64,7 @@
 			</view>
 			<el-gift v-if="giftShow" v-on:call-parent="sendGifts" ></el-gift>
 			<gift-animate v-on:call-parent="agiftShow=false"  v-if="agiftShow" :gift="agift"></gift-animate>
-			<view v-if="isFriend==0" @click="addFriend(touser.userid)" class="add-friend-btn iconfont icon-friend_add_light"></view>
+			
 			<view class="modal-group" :class="aRecordClass">
 				<view class="modal-mask" @click="aRecordClass=''"></view>
 
@@ -75,7 +75,23 @@
 				</view>
 
 			</view>
-
+			<!--添加好友-->
+			<view v-if="isFriend==0" @click="friendBoxClass='flex-col'" class="add-friend-btn iconfont icon-friend_add_light"></view>
+			<view class="modal-group" :class="friendBoxClass">
+				<view class="modal-mask" @click="friendBoxClass=''"></view>
+				<view class="modal" style="margin-top: -50px;">
+					<view class="modal-header">
+						<view class="modal-title">申请成为好友</view>
+						<view class="modal-close icon-close" @click="friendBoxClass=''"></view>
+					</view>
+					<view class="input-flex">
+						 
+						<input type="text" v-model="applyContent" placeholder="申请好友说明" />
+					</view>
+					<view class="btn-row-submit" @click="addFriend(touser.userid)">申请好友</view>
+				</view>
+			</view>
+		
 		</view>
 	</view>
 </template>
@@ -88,11 +104,14 @@
 	import giftAnimate from "../../components/gift-animate.vue";
 	var ws;
 	var gid = 0;
+	var uuid=0;
 	var uid = "胡歌";
 	var touid = "小仙女";
 	var inPage = false;
 	var lastMsg;
 	var audioRecord;
+	var windowHeight=0;
+	var aiusers=[1510,1511];
 	const aRecordOptions = {
 		duration: 10000,
 		sampleRate: 44100,
@@ -120,22 +139,35 @@
 				per_page: 0,
 				sch: 0,
 				oldsch: 0,
-				scrollTop: 1000,
+				scrollTop: 10000,
 				loadIng: false,
 				giftShow:false,
 				agift:{},
-				agiftShow:false
+				agiftShow:false,
+				friendBoxClass:"",
+				applyContent:"",
+				time:0,
 			}
 		},
+		onPageScroll:function(e){
+			if(e.scrollTop==0){
+				this.getList();
+			}
+			//console.log(e.scrollTop)
+		},
 		onLoad: function(ops) {
+			
 			var that = this;
+			uuid=ops.uuid;
 			this.getPage(ops.uuid);
 			this.emoList = emo.emoList();
-			
+			uni.getSystemInfo({
+				success: function (res) {
+					windowHeight=res.windowHeight	
+				}
+			})	
 			//#ifndef H5
 			audioRecord = wx.getRecorderManager();
-
-
 			audioRecord.onStop((res) => {
 				if (res.tempFilePath) {
 					that.recordUpload(res.tempFilePath);
@@ -152,6 +184,7 @@
 			if (inPage) {
 				return false;
 			}
+			 
 			ws.close({
 				success: function(res) {
 
@@ -200,19 +233,26 @@
 				this.send("gift",giftSendId);
 				this.giftShow=false;
 			},
+			
 			addFriend: function(touserid) {
 				var that = this;
-				that.app.get({
-					url: that.app.apiHost + "/index.php?m=friend&a=add&touserid=" + touserid,
+				that.app.post({
+					url: that.app.apiHost + "/index.php?m=friend_apply&a=apply",
+					data:{
+						touserid:touserid,
+						description:that.applyContent
+					},
 					success: function(res) {
 						uni.showToast({
 							title: res.message
 						})
+						that.friendBoxClass="";
 					}
 				})
 			},
 			
 			getPage: function(touserid) {
+				console.log("getPage")
 				var that = this;
 				that.app.get({
 					url: that.app.apiHost + "/module.php?m=im_pm&touserid=" + touserid,
@@ -240,30 +280,25 @@
 							that.wsConn = true;
 
 						}, 300);
-						setTimeout(function() {
-							that.scrollTop = 10000;
-						}, 100)
+						var it=setTimeout(function(){
+							uni.pageScrollTo({
+								scrollTop:that.scrollTop+10,
+								duration:1
+							})
+							
+						},30)
+						
+						
 
 					}
 				})
 			},
-			scrollY: function(e) {
-				this.sch = e.detail.scrollHeight;
-			},
-			scTop: function(e) {
-				if (this.oldsch == 0) {
-					this.oldsch = this.sch;
-				}
-
-				var that = this;
-				that.scrollTop = 0;
-				this.getList();
-
-
-			},
+			
 			getList: function() {
+				this.time=Date.parse(new Date())/1000;
 				if (this.per_page == 0) return false;
 				var that = this;
+				that.loadIng = true;
 				that.app.get({
 					url: that.app.apiHost + "/module.php?m=im_pm&touserid=" + that.touser.userid,
 					data: {
@@ -276,16 +311,13 @@
 							list.unshift(res.data.list[i]);
 						}
 						that.list = list;
-						that.loadIng = true;
-						setTimeout(function() {
-							that.loadIng = false;
-							if (that.oldsch == 0) {
-								that.scrollTop = 10000;
-							} else {
-								that.scrollTop = that.oldsch;
-							}
-
-						}, 200)
+						setTimeout(function(){
+							uni.pageScrollTo({
+								scrollTop:windowHeight+140,
+								duration:0
+							})
+						},10)
+						that.loadIng = false;
 					}
 				})
 			},
@@ -329,7 +361,7 @@
 				ws.onMessage(function(e) {
 
 					var res = JSON.parse(e.data);
-
+					console.log(res)
 					switch (res.type) {
 						case "login":
 							break;
@@ -348,9 +380,26 @@
 
 							that.addMsg(json);
 							//chatDb.add(json);
-							setTimeout(function() {
-								that.scrollTop = 1000000;
-							}, 100)
+							//保存ai发过来的数据
+							if(aiusers.indexOf(that.touser.userid) && uid != res.wsclient_from){
+								that.app.post({
+									url: that.app.apiHost + "/module.php?m=im_msg&a=saveai",
+									data: {
+										touserid: that.touser.userid,
+										content: res.content
+									},
+									success: function(res) {
+										console.log(res)
+									}
+								
+								})
+							}
+							setTimeout(function(){
+								uni.pageScrollTo({
+									scrollTop:100000
+								})
+							},10)
+							
 							break;
 					}
 				});

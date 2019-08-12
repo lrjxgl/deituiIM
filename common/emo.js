@@ -22,13 +22,13 @@ module.exports={
 		var that=this;
 		str+=" ";
 		var res=str.match(/(\\[^\s]+)\s/g);
-		console.log(str);
+ 
 		if(res!=null){
 			for(var i=0;i<res.length;i++){
 				var w=res[i].replace("\\","");
 				w=res[i].replace("\\","");				
 				var index=this.emoIndex(w);
-				console.log(index);
+				 
 				if(index>=0){
 					str=str.replace(res[i],'<img src="'+that.emoHost+'/emo/jx2/'+(index+1)+'.gif" />');
 				}
