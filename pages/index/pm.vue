@@ -112,6 +112,7 @@
 	var audioRecord;
 	var windowHeight=0;
 	var aiusers=[1510,1511];
+	var inAjax=false;
 	const aRecordOptions = {
 		duration: 10000,
 		sampleRate: 44100,
@@ -150,8 +151,12 @@
 			}
 		},
 		onPageScroll:function(e){
-			if(e.scrollTop==0){
+			if(e.scrollTop==0 && !inAjax){
 				this.getList();
+				inAjax=true;
+				setTimeout(function(){
+					inAjax=false;
+				},2000);
 			}
 			//console.log(e.scrollTop)
 		},
@@ -161,11 +166,8 @@
 			uuid=ops.uuid;
 			this.getPage(ops.uuid);
 			this.emoList = emo.emoList();
-			uni.getSystemInfo({
-				success: function (res) {
-					windowHeight=res.windowHeight	
-				}
-			})	
+			var sys=uni.getSystemInfoSync()
+			windowHeight=sys.windowHeight;	
 			//#ifndef H5
 			audioRecord = wx.getRecorderManager();
 			audioRecord.onStop((res) => {
@@ -252,7 +254,6 @@
 			},
 			
 			getPage: function(touserid) {
-				console.log("getPage")
 				var that = this;
 				that.app.get({
 					url: that.app.apiHost + "/module.php?m=im_pm&touserid=" + touserid,
@@ -281,6 +282,10 @@
 
 						}, 300);
 						var it=setTimeout(function(){
+							const query = uni.createSelectorQuery().in(that);
+							query.select('#main').boundingClientRect(function(res) {				  
+								that.oldsch=res.height;
+							}).exec();
 							uni.pageScrollTo({
 								scrollTop:that.scrollTop+10,
 								duration:1
@@ -312,10 +317,22 @@
 						}
 						that.list = list;
 						setTimeout(function(){
-							uni.pageScrollTo({
-								scrollTop:windowHeight+140,
-								duration:0
-							})
+							const query = uni.createSelectorQuery().in(that);
+							 query.select('#main').boundingClientRect(res => {
+								if(that.oldsch==0){
+									uni.pageScrollTo({
+										scrollTop:100000,
+										duration:1
+									})
+								}else{
+									var st=res.height-that.oldsch-windowHeight+160;
+									uni.pageScrollTo({
+										scrollTop:st,
+										duration:1
+									})
+								}
+								that.oldsch=res.height;
+							}).exec();
 						},10)
 						that.loadIng = false;
 					}

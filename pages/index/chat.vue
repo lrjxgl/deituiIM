@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view>
+		<view id="main">
 			<view class="pd-10 bg-fff">
 
 				<template v-if="list.length>0">
@@ -93,6 +93,7 @@
 	var windowHeight=0;
 	var lastMsg;
 	var audioRecord;
+	var inAjax=false;
 	const aRecordOptions = {
 		duration: 10000,
 		sampleRate: 44100,
@@ -125,16 +126,17 @@
 			}
 		},
 		onPageScroll:function(e){
-			if(e.scrollTop==0){
+			if(e.scrollTop==0 && !inAjax){
 				this.getList();
+				inAjax=true;
+				setTimeout(function(){
+					inAjax=false;
+				},2000);
 			}
 		},
 		onLoad: function(ops) {
-			uni.getSystemInfo({
-				success: function (res) {
-					windowHeight=res.windowHeight	
-				}
-			})
+			var sys=uni.getSystemInfoSync()
+			windowHeight=sys.windowHeight;	
 			var that = this;
 			this.emoList = emo.emoList();
 			groupid=ops.groupid;
@@ -209,10 +211,22 @@
 							that.scrollTop += 10;
 						}, 100)
 						setTimeout(function(){
-							uni.pageScrollTo({
-								scrollTop:windowHeight+420,
-								duration:0
-							})
+							const query = uni.createSelectorQuery().in(that);
+							 query.select('#main').boundingClientRect(res => {
+								if(that.oldsch==0){
+									uni.pageScrollTo({
+										scrollTop:100000,
+										duration:1
+									})
+								}else{
+									var st=res.height-that.oldsch-windowHeight+160;
+									uni.pageScrollTo({
+										scrollTop:st,
+										duration:1
+									})
+								}
+								that.oldsch=res.height;
+							}).exec();
 						},10)
 					}
 				})
@@ -241,6 +255,10 @@
 							that.wsConn = true;
 						}, 1000)
 						var it=setTimeout(function(){
+							const query = uni.createSelectorQuery().in(that);
+							query.select('#main').boundingClientRect(function(res) {				  
+								that.oldsch=res.height;
+							}).exec();
 							uni.pageScrollTo({
 								scrollTop:that.scrollTop+10,
 								duration:1

@@ -2,6 +2,7 @@
 	<view>
 		<view class="main-body">
 			
+			<view class="f16 pd-10">定制/技术咨询 QQ:362606856</view>
 			 
 			<block v-if="indexList.length>0">
 			<view v-for="(item,index) in indexList" :key="index" @click="goItem(item)" class="flex pd-10 bg-fff bdb">
