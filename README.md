@@ -8,6 +8,6 @@ deituiIM实现私聊、群聊、聊天记录保存 聊天联系人索引等功�
 
 定制购买 咨询QQ 362606856
 
-演示地址 手机 http://wss.deituicms.com/h5 PC http://wss.deituicms.com 
+演示地址 https://www.fd175.com/uniapp/deituiim/#/ 
 
 deituiCMS http://www.deituicms.com
