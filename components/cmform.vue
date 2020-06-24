@@ -33,9 +33,10 @@
 				</view>
 				<textarea name="content" class="comment-formbox-textarea"></textarea>
 				<view class="comment-formbox-btns">
-					<button formType="submit" class="comment-formbox-bt  js-submit">评论</button>
+					<view @click="cmFormHide()" class="comment-formbox-bt btn-cancel mgl-10">取消</view>
 					<view class="w60"></view>
-					<view @click="cmFormHide()" class="comment-formbox-bt js-cancel">取消</view>
+					 
+					<button formType="submit" class="comment-formbox-bt btn-success">评论</button>
 				</view>
 			</form>
 		</view>
@@ -45,6 +46,7 @@
 <script>
 	 
 	export default {
+		 
 		props:{
 			tablename:"",
 			objectid:""
@@ -96,6 +98,7 @@
 						});
 						that.cmBtnClass="";
 						that.cmFormClass="";
+						that.getList();
 					}
 				})
 			}

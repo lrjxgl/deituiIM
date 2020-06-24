@@ -4,7 +4,7 @@
 			<page-loading v-if="loadIng"></page-loading>
 			<view class=" pd-10 bg-fff">
 				<template v-if="list.length>0">
-					<view v-for="(item,index) in list" :xx="index" :id="item.id" :key="time+'.'+item.id">
+					<view v-for="(item,index) in list" :xx="index" :id="item.id" :key="item.id">
 						<view class="chatbox" v-if="item.isme">
 							<view class="flex-1"></view>
 							<view class="chatbox-desc-b">
@@ -76,22 +76,14 @@
 
 			</view>
 			<!--添加好友-->
-			<view v-if="isFriend==0" @click="friendBoxClass='flex-col'" class="add-friend-btn iconfont icon-friend_add_light"></view>
-			<view class="modal-group" :class="friendBoxClass">
-				<view class="modal-mask" @click="friendBoxClass=''"></view>
-				<view class="modal" style="margin-top: -50px;">
-					<view class="modal-header">
-						<view class="modal-title">申请成为好友</view>
-						<view class="modal-close icon-close" @click="friendBoxClass=''"></view>
-					</view>
-					<view class="input-flex">
-						 
-						<input type="text" v-model="applyContent" placeholder="申请好友说明" />
-					</view>
-					<view class="btn-row-submit" @click="addFriend(touser.userid)">申请好友</view>
+			<friend-apply v-if="Object.keys(touser).length>0" :touserid="touser.userid"></friend-apply>
+			 
+			<view class="modal-group flex-col" v-if="showVideo">
+				<view class="modal-mask" @click="showVideo=false"></view>
+				<view class="flex-center" style="position: fixed;bottom:100px;left:0;right:0;z-index:999;">
+					<video :src="videoUrl" style="width:320px; height:320px;"></video>
 				</view>
 			</view>
-		
 		</view>
 	</view>
 </template>
@@ -102,6 +94,7 @@
 	import emo from "../../common/emo.js";
 	import elGift from "../../components/gift.vue";
 	import giftAnimate from "../../components/gift-animate.vue";
+	import friendApply from "../../components/friend-apply.vue";
 	var ws;
 	var gid = 0;
 	var uuid=0;
@@ -123,7 +116,7 @@
 	}
 	export default {
 		components: {
-			chatMsg,elGift,giftAnimate
+			chatMsg,elGift,giftAnimate,friendApply
 		},
 		data: function() {
 			return {
@@ -145,9 +138,10 @@
 				giftShow:false,
 				agift:{},
 				agiftShow:false,
-				friendBoxClass:"",
-				applyContent:"",
+
 				time:0,
+				showVideo:false,
+				videoUrl:""
 			}
 		},
 		onPageScroll:function(e){
@@ -209,6 +203,10 @@
 					case "gift":
 						this.acceptGift(res.giftid);
 						break;
+					case "showVideo":
+						this.videoUrl=res.url;
+						this.showVideo=true;
+						break;
 				}
 			},
 			acceptGift:function(sendid){
@@ -236,22 +234,7 @@
 				this.giftShow=false;
 			},
 			
-			addFriend: function(touserid) {
-				var that = this;
-				that.app.post({
-					url: that.app.apiHost + "/index.php?m=friend_apply&a=apply",
-					data:{
-						touserid:touserid,
-						description:that.applyContent
-					},
-					success: function(res) {
-						uni.showToast({
-							title: res.message
-						})
-						that.friendBoxClass="";
-					}
-				})
-			},
+			 
 			
 			getPage: function(touserid) {
 				var that = this;
@@ -325,7 +308,7 @@
 										duration:1
 									})
 								}else{
-									var st=res.height-that.oldsch-windowHeight+160;
+									var st=res.height-that.oldsch;
 									uni.pageScrollTo({
 										scrollTop:st,
 										duration:1
@@ -643,22 +626,7 @@
 		top: 0px;
 		bottom: 80px;
 	}
-
-	.add-friend-btn {
-		position: fixed;
-		bottom: 200px;
-		right: 3px;
-		background-color: #15ABA5;
-		color: #fff;
-		width: 30px;
-		height: 30px;
-		line-height: 30px;
-		border-radius: 20px;
-		text-align: center;
-		display: block;
-		cursor: pointer;
-	}
-
+ 
 	.aRecordBox {
 		z-index: 9999;
 		width: 100px;

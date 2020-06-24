@@ -74,7 +74,12 @@
 				</view>
 
 			</view>
-
+			<view class="modal-group flex-col" v-if="showVideo">
+				<view class="modal-mask" @click="showVideo=false"></view>
+				<view class="flex-center" style="position: fixed;bottom:100px;left:0;right:0;z-index:999;">
+					<video :src="videoUrl" style="width:320px; height:320px;"></video>
+				</view>
+			</view>
 
 		</view>
 	</view>
@@ -122,7 +127,9 @@
 				emoClass: "",
 				aRecordClass: "",
 				aRecordIng: false,
-				time:0
+				time:0,
+				showVideo:false,
+				videoUrl:""
 			}
 		},
 		onPageScroll:function(e){
@@ -179,6 +186,17 @@
 			}
 		},
 		methods: {
+			chatMsgEven:function(res){
+				switch(res.type){
+					case "gift":
+						this.acceptGift(res.giftid);
+						break;
+					case "showVideo":
+						this.videoUrl=res.url;
+						this.showVideo=true;
+						break;
+				}
+			},
 			scrollY: function(e) {
 				this.sch = e.detail.scrollHeight;
 			},

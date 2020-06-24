@@ -2,9 +2,9 @@
 	<view>
 		<view class="sglist">
 			 
-			<view v-for="(item,index) in pageData.list" :key="index" @click="goBlog(item.id)" class="sglist-item">
+			<view v-for="(item,index) in list" :key="index" @click="goBlog(item.id)" class="sglist-item">
 				
-				<view class="sglist-title block" v-html="item.parsecontent"></view>
+				<view class="cl2 f14 mgb-5 block" v-html="item.content"></view>
 				<view class="sglist-imglist">
 					 
 					<img v-for="(img,imgIndex) in item.imgslist" :key="imgIndex" :src="img+'.100x100.jpg'" class="sglist-imglist-img" />
@@ -26,13 +26,17 @@
 	export default({
 		data:function(){
 			return {
-				pageData:{},
+				per_page:0, 
+				list:[],
 				pageLoad:false,
 				type:""
 			}
 		},
 		onLoad:function(ops){
 			title=ops.title;
+			uni.setNavigationBarTitle({
+				title:title
+			})
 			this.getPage();
 		},
 		methods:{
@@ -56,7 +60,28 @@
 					dataType:"json",
 					success:function(res){
 						that.pageLoad=true;
-						that.pageData=res.data;
+						that.list=res.data.list;
+						that.per_page=res.data.per_page;
+					}
+				})
+			},
+			getList:function(){
+				var that=this;
+				if(this.per_page==0){
+					return false;
+				}
+				this.app.get({
+					url:this.app.apiHost+"/module.php?m=sblog_blog&a=topic&ajax=1",
+					
+					data:{
+						title:title
+					},
+					dataType:"json",
+					success:function(res){
+						that.pageLoad=true;
+						for(var i in res.data.list){
+							that.list.push(res.data.list[i]);
+						}
 					}
 				})
 			}

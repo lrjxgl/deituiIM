@@ -113,6 +113,28 @@ module.exports = {
 			}
 		})
 	},
+	getSync:function(ops){
+		var ops=ops;
+		if(ops.data==undefined){
+			ops.data={
+				authcode:this.getAuthCode(),
+				fromapp:this.fromapp(),
+				 
+				ajax:1
+			};
+		}else{
+			ops.data.authcode=this.getAuthCode();
+			ops.data.fromapp=this.fromapp();
+			ops.data.ajax=1;
+			 
+		}
+		return uni.request({
+			url:ops.url,
+			method:"GET",
+			data:ops.data
+		});
+		
+	},
 	post:function(ops){
 		var callback=callback;
 		var ops=ops;
@@ -138,6 +160,24 @@ module.exports = {
 					ops.success(rs.data);
 				}
 			}	
+		})
+	},
+	postSync:function(ops){
+		 
+		var ops=ops;
+		if(ops.url.indexOf("?") >= 0){
+			ops.url+="&ajax=1&authcode="+this.getAuthCode()+"&fromapp="+this.fromapp();
+		}else{
+			ops.url+="?ajax=1&authcode="+this.getAuthCode()+"&fromapp="+this.fromapp();
+		}
+		
+		return uni.request({
+			url:ops.url,
+			data:ops.data,
+			method:"POST",
+			header:{
+				"content-type":"application/x-www-form-urlencoded"
+			}
 		})
 	},
 	goHome:function(){

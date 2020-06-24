@@ -3,13 +3,16 @@
 		<view class="main-body">
 			<view >
 				<view @click="gourl('../friend_apply/index')" class="row-item bg-white">
+					<view class="iconfont icon-friend_add_light mgr-5"></view>
 					<view class="row-item-title">新朋友</view>
+					<view v-if="newNum>0" class="cl-red">{{newNum}}</view>
 				</view>
 				<view v-for="(item,name,index) in list" :key="index">
 					<view :id="'zms'+name" class="f16 pd-10 zms">{{name}}</view>
-					<view class="row-box">
+					<view class="ubox">
 						<block  v-for="(cc,cckey) in item.child" :key="cckey">
 							<view  @click="goPm(cc.userid)" class="row-item-text">
+								<image :src="cc.user_head+'.100x100.jpg'" class="wh-30 bd-radius-5 mgr-5"></image>
 								<div class="row-item-title">{{cc.nickname}}</div>
 							</view>
 						</block>
@@ -39,10 +42,12 @@
 				list:{},
 				zm:"A",
 				zms:{},
+				newNum:0
 			}
 		},
 		onLoad() {
-			this.getPage(); 
+			this.getPage();
+			this.getNewNum(); 
 			query = uni.createSelectorQuery().in(this);
 		},
 		onPageScroll: function(e) {
@@ -114,12 +119,25 @@
 						},300)
 					}
 				})
+			},
+			getNewNum:function(){
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/index.php?m=friend_apply&a=newnum",
+					success:function(res){
+						that.newNum=res.data; 
+					}
+				})
 			}
 		}
 	}
 </script>
 
 <style>
+	.ubox{
+		background-color: #fff;
+		padding-left: 10px;
+	}
 	 .pBox{
 	 	position: fixed;
 	 	top: 90px;
@@ -135,14 +153,15 @@
 	 .pBox-item{
 	  
 	 	text-align: center;
-	 	width: 18px;
-	 	height: 18px;
-	 	line-height: 18px;
-	 	font-size: 12px;
+	 	width: 36rpx;
+	 	height: 36rpx;
+	 	line-height: 36rpx;
+	 	font-size: 20rpx;
+		margin-bottom: 2px;
 	 	
 	 }
 	 .pBox-active{
 	 	background-color: #eee;
-	 	border-radius: 20px;
+	 	border-radius: 36rpx;
 	 }
 </style>

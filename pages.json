@@ -32,6 +32,23 @@
 				"navigationBarTitleText": "通讯录"
 			}
 		},{
+			"path":"pages/follow/index",
+			"style":{
+				"navigationBarTitleText":"粉丝关注"
+			}
+		},
+		{
+			"path":"pages/pm/index",
+			"style":{
+				"navigationBarTitleText":"我的私信"
+			}
+		},{
+			"path":"pages/pm/detail",
+			"style":{
+				"navigationBarTitleText":"私信"
+			} 
+		}
+		,{
 			"path":"pages/user/index",
 			"style":{
 				"navigationBarTitleText":"我的"
@@ -40,6 +57,12 @@
 			"path":"pages/user/info",
 			"style":{
 				"navigationBarTitleText":"用户信息编辑"
+			}
+		},
+		{
+			"path": "pages/user/set",
+			"style": {
+				"navigationBarTitleText": "用户设置"
 			}
 		},
 		{
@@ -76,36 +99,125 @@
 				"navigationBarTitleText":"我的评论"
 			}
 		},{
-			"path":"pages/test/index"
+			"path": "pages/html/aboutus",
+			"style": {
+				"navigationBarTitleText": "关于我们"
+			}  
 		},{
+			"path": "pages/notice/my",
+			"style": {
+				"navigationBarTitleText": "通知"
+			}
+		},{
+			"path": "pages/kefu/index",
+			"style": {
+				"navigationBarTitleText": "客服"
+			}
+		}, {
 			"path":"pages/gold/buy"
 		},{
 			"path":"pages/friend_apply/index","style":{
 				"navigationBarTitleText":"新朋友"
+			}
+		},{
+			"path": "pages/recharge/my",
+			"style": {
+				"navigationBarTitleText": "支付记录"
+			}
+		},
+		{
+			"path": "pages/recharge/index",
+			"style": {
+				"navigationBarTitleText": "支付"
+			}
+		},
+		{
+			"path": "pages/recharge/order",
+			"style": {
+				"navigationBarTitleText": "订单支付"
+			}
+		},
+		{
+			"path": "pages/pay_log/my",
+			"style": {
+				"navigationBarTitleText": "消费记录"
 			}
 		}
 		
 	],
 	"subPackages":[
 		{
-			"root":"pagesblog",
-			"pages":[
-				{	
-					"path":"sblog/index",
-					"style":{
-						"navigationBarTitleText":"广场"
-					}
-				},
-				{"path":"sblog_blog/show"},
-				{"path":"sblog_blog/topic"},
-				{"path":"sblog_blog/add"},
-				{"path":"sblog_blog/my"},
-				{"path":"sblog_blog/search"},
-				{"path":"sblog_user/index"}
-			]
-			
-		}
+				"root": "pagesblog",
+				"pages": [{
+						"path": "sblog/index",
+						"style": {
+							"navigationBarTitleText": "广场"
+						}
+					},
+					{
+						"path": "sblog_blog/show",
+						"style":{
+							"navigationBarTitleText":"详情"
+						}
+					},
+					{
+						"path": "sblog_blog/topic",
+						"style":{
+							"navigationBarTitleText":"话题"
+						}
+					},
+					{
+						"path": "sblog_blog/add",
+						"style":{
+							"navigationBarTitleText":"发布帖子"
+						}
+					},
+					{
+						"path": "sblog_blog/my",
+						"style": {
+							"navigationBarTitleText": "我的帖子"
+						}
+					},
+					{
+						"path": "sblog_blog/search",
+						"style":{
+							"navigationBarTitleText":"搜索"
+						}
+					},
+					{
+						"path": "sblog_user/index",
+						"style": {
+							"navigationBarTitleText": "个人中心"
+						}
+					},
+					{
+						"path": "sblog_people/index",
+						"style": {
+							"navigationBarTitleText": "白茶人"
+						}
+					},
+					{
+						"path": "sblog_home/index",
+						"style": {
+							"navigationBarTitleText": "主页"
+						}
+					},
+					{
+						"path": "sblog_blog_comment/my",
+						"style": {
+							"navigationBarTitleText": "我的评论"
+						}
+					}  
+				]
+		
+			}	
 	],
+	"preloadRule": {
+		"pages/index/index": {
+			"network": "all",
+			"packages": ["pagesblog"]
+		}
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "deituiIM",

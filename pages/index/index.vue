@@ -27,7 +27,7 @@
 				
 				
 				
-				<view class="cl3">{{item.time}}</view>
+				<view class="cl3 f12">{{item.time}}</view>
 			</view>
 			</block>
 			<block v-else>

@@ -1,12 +1,12 @@
 <template>
 	<view class="w1">
 		<view  v-for="(item,index) in nodes" :key="index">
-			<block v-if="item.type=='audio'" @click="playMusic(item.src)"><view class="iconfont f20 icon-video_light"></view></block>
+			<view class="flex" v-if="item.type=='audio'" @click="playMusic(item.src)"><view class="iconfont f20 icon-musicfill"></view></view>
 			<block v-if="item.type=='video'">
-				<video show-fullscreen-btn="true" controls="true"  class="w2-1"   :src="item.src"></video>
+				<view @click="showVideo(item.src)" class="iconfont icon-recordlight f36"></view>
 			</block>
 			<block v-if="item.type=='img'">
-				<image :src="item.src" mode="widthFix" class="w100"></image>
+				<image @click="lookImg(item.src)" :src="item.src+'.small.jpg'" mode="widthFix" class="w100"></image>
 			</block>
 			<block v-if="item.type=='file'">
 				<view @click="downFile(item.src)" class="iconfont icon-file f20"></view>
@@ -18,7 +18,7 @@
 					</view>
 			</block>
 			<block v-else >
-				<rich-text class="flex" :nodes="item.content"></rich-text>
+				<rich-text class="flex cl2 f12" :nodes="item.content"></rich-text>
 			</block>
 			
 		</view>
@@ -47,13 +47,14 @@
 			 
 			if(res){
 				con=res[2];
-				
+				 
 				this.nodes=[{
 					type:res[1],
 					src:con,
 					content:""
 					
 				}]
+				
 			}else{
 				this.nodes=[{
 					type:"text",
@@ -63,8 +64,13 @@
 			
 		},
 		methods:{
+			lookImg:function(ee){
+				uni.previewImage({
+				            urls: [ee]
+				});
+			},
 			playMusic:function(url){
-				 
+				console.log("play music") 
 				audioClass.play(url);
 			},
 			downFile:function(url){
@@ -79,6 +85,10 @@
 			},
 			getGift:function(giftid){
 				this.$emit("call-parent",{type:"gift",giftid:giftid})
+			},
+			showVideo:function(url){
+				console.log("show"+url)
+				this.$emit("call-parent",{type:"showVideo",url:url})
 			}
 		}
 	}

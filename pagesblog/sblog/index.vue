@@ -62,6 +62,13 @@ export default({
 		}
 		this.getPage();
 	},
+	onReachBottom:function(){
+	 
+		if(this.page=='blog'){
+			this.getList();
+		}
+		
+	},
 	methods:{
 		gourl:function(url){
 			uni.navigateTo({

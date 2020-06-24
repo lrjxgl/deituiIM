@@ -3,17 +3,17 @@
 		<view class="h30"></view>
 		<view class="flex-center ">
 			<view @click="goHome()" class="flex-center">
-				<image src="https://www.fd175.com/static/logo.png" class="wh-60"></image>
+				<image src="https://www.baichaba.com/static/images/logo.png" class="wh-60"></image>
 			</view>
 		</view>
-		<form autocomplete="off" class="loginBox"  id="login-form" @submit="formSubmit" >
+		<form class="loginBox"    autocomplete="off" id="login-form" @submit="formSubmit" >
 			<view class="flexIcon">
       	<view class="flexIcon-icon iconfont icon-phone_light"></view>
-        <input type="text"  placeholder-class="cl-white" class="flexIcon-text"  name="telephone" placeholder="请输入手机号码" />
+        <input type="text" placeholder-class="cl-white" class="flexIcon-text"  name="a"  autocomplete="off"  v-model="telephone" placeholder="请输入手机号码" />
       </view>
       <view class="flexIcon"> 
       	<view class="flexIcon-icon iconfont icon-password"></view>
-        <input type="password" placeholder-class="cl-white" class="flexIcon-text"  name="password" placeholder="请输入登录密码" />
+        <input type="password"  placeholder-class="cl-white" class="flexIcon-text" name="b"  autocomplete="off"  v-model="password" placeholder="请输入登录密码" />
       </view>
 			<view></view>
       <button type="primary" formType="submit"  class="btn-row-submit">登陆</button>
@@ -54,7 +54,9 @@
 				pageData:{},
 				notephone:"请输入手机号码",
 				notepwd:"请输入密码",
-				isWeixin:false
+				isWeixin:false,
+				telephone:"",
+				password:""
 			}
 		},
 		onLoad:function(){
@@ -70,21 +72,7 @@
 				var that=this;
 				that.app.goHome();
 			},
-			tel:function(){
-				if(this.notephone=='请输入手机号码'){
-					this.notephone="";
-				}else if(this.notephone==''){
-					this.notephone='请输入手机号码'
-				}
-			},
-			pass:function(){
-				console.log(this.notepwd);
-				if(this.notepwd=='请输入密码'){
-					this.notepwd="";
-				}else if(this.notepwd==''){
-					this.notepwd='请输入密码'
-				}
-			},
+			
 			wxLogin: function(e) {
 				var that=this;
 				var user=e.detail.userInfo;
@@ -137,7 +125,10 @@
 					header:{
 						"content-type":"application/x-www-form-urlencoded"
 					},
-					data:e.detail.value,
+					data:{
+						telephone:that.telephone,
+						password:that.password
+					},
 					success:function(res){
 						var data=res.data;
 						if(res.data.error){
