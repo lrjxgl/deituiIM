@@ -87,13 +87,11 @@
 			getPage: function () {
 				var that = this;
 				this.app.get({
-					url: app.apiHost + "/module.php?m=sblog_blog&ajax=1&a=show&id=" + id,
-					data:{
-						authcode:this.app.getAuthCode()
-					},
+					url: that.app.apiHost + "/module.php?m=sblog_blog&ajax=1&a=show&id=" + id,
+					 
 					success: function (res) {
 						that.pageLoad = true;
-						res.data.data.content=app.html(res.data.data.content);
+						res.data.data.content=that.app.html(res.data.data.content);
 						that.pageData = res.data;
 						 
 					}
