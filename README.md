@@ -10,4 +10,6 @@ deituiIM实现私聊、群聊、聊天记录保存 聊天联系人索引等功�
 
 演示地址 https://www.fd175.com/uniapp/deituiim/#/ 
 
-deituiCMS http://www.deituicms.com
+安卓下载： https://www.fd175.com/uniapp/deituiim/android.apk
+
+后端deituiCMS http://www.deituicms.com
