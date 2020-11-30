@@ -4,20 +4,21 @@
 			<page-loading v-if="loadIng"></page-loading>
 			<view class=" pd-10 bg-fff">
 				<template v-if="list.length>0">
-					<view v-for="(item,index) in list" :xx="index" :id="item.id" :key="item.id">
+					<view v-for="(item,index) in list"  :id="item.id" :key="item.id">
 						<view class="chatbox" v-if="item.isme">
 							<view class="flex-1"></view>
 							<view class="chatbox-desc-b">
 							<chat-msg v-on:call-parent="chatMsgEven" :content="item.content"></chat-msg>
 							</view>
-							<image :src="user.user_head+'.100x100.jpg'" class="wh-40 mgl-10 bd-radius-10"></image>
+							<image @click="goHome(user.userid)" :src="user.user_head+'.100x100.jpg'" class="wh-40 mgl-10 bd-radius-10"></image>
 						</view>
 						<view class="chatbox" v-else>
-							<image :src="touser.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
+							<image @click="goHome(touser.userid)" :src="touser.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
+							<view class="chatbox-desc-a">
+							<chat-msg  v-on:call-parent="chatMsgEven" :content="item.content"></chat-msg>
+							</view>
 							<view class="flex-1">
-								<view class="chatbox-desc-a">
-								<chat-msg :content="item.content"></chat-msg>
-								</view>
+								
 							</view>
 						</view>
 
@@ -29,8 +30,8 @@
 			</view>
 
 			<view class="fixFoot-row"></view>
-			<view class="fixFoot bg-fff pdb-5">
-				<view class="input-flex">
+			<view class="fixFoot flex-jc-bettwen bg-fff pdt-5">
+				<view class="flex pdl-5 pdr-5">
 					<input class="input-flex-text" v-model="content" type="text">
 					<view class="input-flex-btn w60" @click="send('content')">发送</view>
 				</view>
@@ -62,7 +63,7 @@
 					</view>
 				</view>
 			</view>
-			<el-gift v-if="giftShow" v-on:call-parent="sendGifts" ></el-gift>
+			<el-gift :touserid="touser.userid" v-if="giftShow" v-on:call-parent="sendGifts" ></el-gift>
 			<gift-animate v-on:call-parent="agiftShow=false"  v-if="agiftShow" :gift="agift"></gift-animate>
 			
 			<view class="modal-group" :class="aRecordClass">
@@ -176,18 +177,21 @@
 			})
 			//#endif
 		},
-		onHide: function() {
+		onUnload:function(){
+			console.log("onUnload")
 			if (inPage) {
 				return false;
 			}
-			 
+			console.log("关闭WS") 
 			ws.close({
 				success: function(res) {
-
+			
 				}
 			});
 		},
+		
 		onShow: function() {
+			console.log("onShow")
 			if (inPage) {
 				return false;
 			}
@@ -198,6 +202,11 @@
 		},
 
 		methods: {
+			goHome:function(userid){
+				uni.navigateTo({
+					url:"../../pagesblog/sblog_home/index?userid="+userid
+				})
+			},
 			chatMsgEven:function(res){
 				switch(res.type){
 					case "gift":
@@ -244,13 +253,6 @@
 						uid = res.data.ws_uid;
 						touid = res.data.ws_touid;
 						that.per_page = res.data.per_page;
-						/*
-						var list=chatDb.msgList({
-							uid:uid,
-							touid:touid,
-							gid:gid
-						});
-						*/
 						that.isFriend = res.data.isFriend;
 						that.list = res.data.list;
 						that.touser = res.data.touser;
@@ -265,23 +267,24 @@
 
 						}, 300);
 						var it=setTimeout(function(){
-							const query = uni.createSelectorQuery().in(that);
-							query.select('#main').boundingClientRect(function(res) {				  
-								that.oldsch=res.height;
-							}).exec();
+							console.log("pageScrollTo")
 							uni.pageScrollTo({
-								scrollTop:that.scrollTop+10,
-								duration:1
+								scrollTop:3000,
+								duration:30
 							})
 							
-						},30)
-						
-						
+						},300)
+
 
 					}
 				})
 			},
-			
+			inArray:function(a,b){
+				for(var i in b){
+					if(a.id==b[i].id) return true;
+				}
+				return false;
+			},
 			getList: function() {
 				this.time=Date.parse(new Date())/1000;
 				if (this.per_page == 0) return false;
@@ -296,7 +299,10 @@
 						that.per_page = res.data.per_page;
 						var list = that.list;
 						for (var i in res.data.list) {
-							list.unshift(res.data.list[i]);
+							if(!that.inArray(res.data.list[i],list)){
+								list.unshift(res.data.list[i]);
+							}
+							
 						}
 						that.list = list;
 						setTimeout(function(){
@@ -304,19 +310,18 @@
 							 query.select('#main').boundingClientRect(res => {
 								if(that.oldsch==0){
 									uni.pageScrollTo({
-										scrollTop:100000,
-										duration:1
+										scrollTop:100000
 									})
 								}else{
 									var st=res.height-that.oldsch;
 									uni.pageScrollTo({
 										scrollTop:st,
-										duration:1
+										duration:30
 									})
 								}
 								that.oldsch=res.height;
 							}).exec();
-						},10)
+						},100)
 						that.loadIng = false;
 					}
 				})
@@ -335,6 +340,7 @@
 						})
 					}
 				});
+				//ws.close()
 				ws.onOpen(function(res) {
 
 
@@ -348,11 +354,11 @@
 						data: msg
 					});
 				});
+				
 				ws.onError(function(res) {
-					uni.showToast({
-						title: "ws error"
-					})
-					if (res == '1') {
+					console.log(res)
+				 
+					if (Object.keys(res).length>1) {
 						ws.wsInit();
 					}
 
@@ -398,7 +404,7 @@
 								uni.pageScrollTo({
 									scrollTop:100000
 								})
-							},10)
+							},100)
 							
 							break;
 					}

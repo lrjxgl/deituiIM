@@ -1,23 +1,38 @@
 <template>
 	<view>
-		<view class="tabs-border mgb-5">
-			<view @click="setType('')" :class="{'tabs-border-active':type==''}" class="tabs-border-item">关注</view>
-			<view @click="setType('hot')" :class="{'tabs-border-active':type=='hot'}" class="tabs-border-item">推荐</view>
-			<view @click="setType('new')" :class="{'tabs-border-active':type=='new'}" class="tabs-border-item">最新</view>
-			<view @click="setType('topic')" :class="{'tabs-border-active':type=='topic'}"  class="tabs-border-item">话题</view>
-			
-		</view>
-		
+		<view class="gTab">
+			<view  @click="setType('city')" :class="{'gTab-active':type=='city'}"  class="gTab-item">同城
+				<view v-if="type=='city'" class="gTab-dot"></view>
+			</view>
+			<view  @click="setType('all')" :class="{'gTab-active':type=='all'}"  class="gTab-item">
+				全部
+				<view v-if="type=='all'" class="gTab-dot"></view>
+			</view>
+			<view  @click="setType('follow')" :class="{'gTab-active':type=='follow'}"  class="gTab-item">
+				关注
+				<view v-if="type=='follow'" class="gTab-dot"></view>
+			</view>
+			 
+		</view>	
+		 
+		 
 		<view v-if="page=='blog'" style="display: none;" :class="'flex-col'" class="sglist">
-			<view class="emptyData" v-if="pageData.rscount==0" >暂无帖子</view> 
-			<view v-for="(item,index) in pageData.list" :key="index" @click="goBlog(item.id)" class="sglist-item">
-				
-				<view class="sglist-title block" v-html="item.content"></view>
-				<view class="sglist-imglist">
+			<view class="emptyData" v-if="rscount==0" >暂无帖子</view> 
+			<view v-for="(item,index) in list" :key="index" @click="goBlog(item.id)" class="sglist-item">
+				<div class="flex mgb-5">
+					<img :src="item.user.user_head+'.100x100.jpg'" class="wh-40 bd-radius-50" />
+					<div class="flex-1 mgl-5">
+						<div class="f14 fw-600 mgb-5">{{item.user.nickname}}</div>
+						<div class="flex">
+							<div class="f12 cl3">{{item.timeago}}</div>
+							
+						</div>
+					</div>
 					 
-					<img v-for="(img,imgIndex) in item.imgslist" :key="imgIndex" :src="img+'.100x100.jpg'" class="sglist-imglist-img" />
-					
-				</view>
+				</div>
+				<view class="sglist-title block" v-html="item.content"></view>
+				<list-image :imgslist="item.imgslist"></list-image>
+				 
 				<view class="sglist-ft">
 					<view class="sglist-ft-love">{{item.love_num}}</view>
 					<view class="sglist-ft-cm">{{item.comment_num}}</view>
@@ -26,29 +41,31 @@
 			</view>
 			<view @click="getList" v-if="per_page>0" class="loadMore">点我加载更多...</view>
 		</view>
-		<view  v-if="page=='topic'" class="blogList">
-			<view @click="goTopic(item.title)" class="blogList-item" v-for="(item,index) in pageData.topicList" :key="index">{{item.title}}</view>
-			
-		</view>
+		 
 		<navigator :url="'../sblog_blog/add'" class="fixedAdd">发布</navigator>
 		<mt-footer tab="sblog"></mt-footer>
 	</view>
 </template>
 
 <script>
-import mtFooter from "../../components/footer.vue"; 
+import mtFooter from "../../components/footer.vue";
+import listImage from "../../components/list-image.vue"; 
 var isFirst=true;
 export default({
 	components:{
-		mtFooter
+		mtFooter,
+		listImage
 	},
 	data:function(){
 		return {
-			pageData:{},
+			list:[],
 			pageLoad:false,
 			page:"blog",
-			type:"",
-			per_page:0
+			type:"city",
+			per_page:0,
+			tab:"city",
+			isFirst:true,
+			rscount:0
 		}
 	},
 	onLoad:function(){
@@ -77,16 +94,9 @@ export default({
 		},
 		setType:function(type){
 			this.type=type;
-			
-			uni.setStorageSync("sblog-index-type",type);
-			if(type=='topic'){
-				this.page="topic";
-				uni.setStorageSync("sblog-index-page","topic");
-			}else{
-				this.page="blog";
-				uni.setStorageSync("sblog-index-page","blog");
-				this.getPage();
-			}
+			this.per_page=0;
+			this.isFirst=true;
+			this.getList();
 			
 		},
 		goBlog:function(id){
@@ -109,15 +119,16 @@ export default({
 				dataType:"json",
 				success:function(res){
 					that.pageLoad=true;
-					that.pageData=res.data;
+					that.list=res.data.list;
 					that.per_page=res.data.per_page;
-					isFirst=false;
+					that.isFirst=false;
+					that.rscount=res.data.rscount;
 				}
 			})
 		},
 		getList:function(){
 			var that=this;
-			if(!isFirst && that.per_page==0) return false;
+			if(!that.isFirst && that.per_page==0) return false;
 			this.app.get({
 				url:that.app.apiHost+"/module.php?m=sblog_blog&a=list&ajax=1",
 				data:{
@@ -128,17 +139,16 @@ export default({
 				success:function(res){
 					
 					that.per_page=res.data.per_page;
-					
-					if(isFirst){
-						isFirst=false;
-						that.pageData.list=res.data.list;
+					that.rscount=res.data.rscount;
+					if(that.isFirst){
+						that.isFirst=false;
+						that.list=res.data.list;
 					}else{
-						var pageData=that.pageData;
-						var list=pageData.list;
+						 
 						for(var i in res.data.list){
-							list.push(res.data.list[i]);
+							that.list.push(res.data.list[i]);
 						}
-						that.pageData.list=list;
+						 
 					}
 					
 				}
@@ -150,6 +160,19 @@ export default({
 
 <style>
 	@import "../../common/sblog.css";
+	.aqBox{
+		width:33.3%;
+		padding: 5px; 
+		box-sizing: border-box;
+	}
+	.aqBox-img{
+		width:100%;
+	}
+	.aq-img{
+		width: 20px;
+		height: 20px;
+		margin-right: 3px;
+	}
 	.swiper-container {
 		width: 100%;
 		padding-bottom: 62.5%;

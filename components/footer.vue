@@ -2,11 +2,11 @@
 	<view>
 		<view class="footer-row"></view>
 		<view class="footer">
-			<view @click="goIndex" :class="{'footer-active':tabActive=='index'}" class="footer-item  icon-message_light">消息</view>
-			<view @click="goNews" :class="{'footer-active':tabActive=='sblog'}" class="footer-item icon-attention_light">广场</view>
-			<view @click="goMatch"  :class="{'footer-active':tabActive=='match'}" class="footer-item icon-emojiflashfill">无聊</view>
-			<view @click="goContact" :class="{'footer-active':tabActive=='contact'}"  class="footer-item icon-people_list_light  icon-my_light">通讯录</view>
-			<view @click="goUser" :class="{'footer-active':tabActive=='user'}"  class="footer-item icon-my_light">我的</view>
+			<view @click="goIndex" :class="{'footer-active':tabActive=='index'}" class="footer-item  icon-like">缘分</view>
+			<view @click="goNews" :class="{'footer-active':tabActive=='sblog'}" class="footer-item icon-attention_light">动态</view>
+			<!--<view @click="goZblive"  :class="{'footer-active':tabActive=='zblive'}" class="footer-item icon-video_light">直播</view>-->
+			<view @click="goMsg" :class="{'footer-active':tabActive=='msg'}"  class="footer-item icon-message  icon-notice">消息</view>
+			<view @click="goUser" :class="{'footer-active':tabActive=='user'}"  class="footer-item icon-my_light">我</view>
 		</view>
 	</view>
 </template>
@@ -30,9 +30,9 @@
 					url:"../../pages/index/index"
 				})
 			},
-			goContact:function(){
+			goMsg:function(){
 				uni.reLaunch({
-					url:"../../pages/contact/index"
+					url:"../../pages/index/indexmsg"
 				})
 			},
 			goUser:function(){
@@ -45,9 +45,9 @@
 					url:"../../pagesblog/sblog/index"
 				})
 			},
-			goMatch:function(){
+			goZblive:function(){
 				uni.reLaunch({
-					url:"../../pages/match/index"
+					url:"../../pagezblive/zblive/index"
 				})
 			}
 		}
@@ -55,4 +55,7 @@
 </script>
 
 <style>
+	.footer-item{
+		font-size: 12px;
+	}
 </style>

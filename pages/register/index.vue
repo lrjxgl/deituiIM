@@ -23,7 +23,10 @@
 				<input class="input-flex-text" name="password" type="text" password=true  placeholder="请填写密码">
 			</view>
 			
-			 
+			<div class="input-flex">
+				<div class="input-flex-label">邀请码</div>
+				<input class="input-flex-text" name="invitecode" placeholder="请输入邀请码" />
+			</div> 
 			
 			<button type="primary" form-type="submit" class="btn-row-submit btn-success">立即注册</button>
 		   

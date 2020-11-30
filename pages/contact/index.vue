@@ -24,7 +24,7 @@
 			</view>
 			
 		</view>
-		<mt-footer tab="contact"></mt-footer>
+		 
 	</view>
 </template>
 

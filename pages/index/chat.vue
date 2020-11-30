@@ -4,7 +4,7 @@
 			<view class="pd-10 bg-fff">
 
 				<template v-if="list.length>0">
-					<view v-for="(item,index) in list" :key="time+'.'+item.id">
+					<view v-for="(item,index) in list" :key="item.id">
 						<view class="chatbox" v-if="item.userid==user.userid">
 							<view class="flex-1" :a="index"></view>
 							<view class="chatbox-desc-b mgb-5 mgr-5">
@@ -31,8 +31,8 @@
 
 			</view>
 			<view class="fixFoot-row"></view>
-			<view class="fixFoot bg-fff pdb-5">
-				<view class="input-flex">
+			<view class="fixFoot flex-jc-bettwen bg-fff pdt-5">
+				<view class="flex pdl-5 pdr-5">
 					<input class="input-flex-text" v-model="content" type="text">
 					<view class="input-flex-btn w60" @click="send('content')">发送</view>
 				</view>
@@ -49,8 +49,9 @@
 					<!-- #endif -->
 					<view @click="emoClass='flex-col'" class="flex-1 iconfont icon-emoji f20"></view>
 					<view @click="choiceFile('file')" class="flex-1 iconfont none icon-file f20 "></view>
+					 
 				</view>
-
+			
 			</view>
 			<view id="emoModal" :class="emoClass" class="modal-group">
 				<view class="modal-mask" @click="emoClass=''"></view>
@@ -114,7 +115,7 @@
 		data: function() {
 			return {
 				per_page: 0,
-				"list": [],
+				list: [],
 				content: "",
 				wsConn: false,
 				group: {},
@@ -129,7 +130,8 @@
 				aRecordIng: false,
 				time:0,
 				showVideo:false,
-				videoUrl:""
+				videoUrl:"",
+				sfTop:210,
 			}
 		},
 		onPageScroll:function(e){
@@ -138,7 +140,7 @@
 				inAjax=true;
 				setTimeout(function(){
 					inAjax=false;
-				},2000);
+				},1000);
 			}
 		},
 		onLoad: function(ops) {
@@ -150,6 +152,7 @@
 			this.getPage();
 			
 			//#ifndef H5
+			this.sfTop=160;
 			audioRecord = wx.getRecorderManager();
 
 
@@ -166,16 +169,19 @@
 			//#endif
 
 		},
-		onHide: function() {
+		onUnload:function(){
+			console.log("onUnload")
 			if (inPage) {
 				return false;
 			}
+			console.log("关闭WS") 
 			ws.close({
 				success: function(res) {
-
+			
 				}
 			});
 		},
+		
 		onShow: function() {
 			if (inPage) {
 				return false;
@@ -186,6 +192,12 @@
 			}
 		},
 		methods: {
+			inArray:function(a,b){
+				for(var i in b){
+					if(a.id==b[i].id) return true;
+				}
+				return false;
+			},
 			chatMsgEven:function(res){
 				switch(res.type){
 					case "gift":
@@ -222,7 +234,10 @@
 						that.per_page = res.data.per_page;
 						var list = that.list;
 						for (var i in res.data.list) {
-							list.unshift(res.data.list[i]);
+							if(!that.inArray(res.data.list[i],list)){
+								list.unshift(res.data.list[i]);
+							}
+							
 						}						
 						that.list =list;
 						setTimeout(function() {
@@ -233,19 +248,18 @@
 							 query.select('#main').boundingClientRect(res => {
 								if(that.oldsch==0){
 									uni.pageScrollTo({
-										scrollTop:100000,
-										duration:1
+										scrollTop:100000
 									})
 								}else{
-									var st=res.height-that.oldsch-windowHeight+160;
+									var st=res.height-that.oldsch;//res.height-that.oldsch-windowHeight+that.sfTop;
+									console.log(st);
 									uni.pageScrollTo({
-										scrollTop:st,
-										duration:1
+										scrollTop:st
 									})
 								}
 								that.oldsch=res.height;
 							}).exec();
-						},10)
+						},100)
 					}
 				})
 			},
@@ -262,27 +276,20 @@
 						uni.setNavigationBarTitle({
 							title: res.data.group.title
 						})
-						/*
-						var list=chatDb.msgList({
-							gid:gid
-						});
-						*/
+						
 						that.list = res.data.list;
 						that.wsInit();
 						setTimeout(function() {
 							that.wsConn = true;
 						}, 1000)
 						var it=setTimeout(function(){
-							const query = uni.createSelectorQuery().in(that);
-							query.select('#main').boundingClientRect(function(res) {				  
-								that.oldsch=res.height;
-							}).exec();
+
 							uni.pageScrollTo({
-								scrollTop:that.scrollTop+10,
-								duration:1
+								scrollTop:3000,
+								duration:30
 							})
 							
-						},30)
+						},300)
 					}
 				})
 			},
@@ -313,8 +320,11 @@
 					});
 				});
 				ws.onError(function(res) {
-
-
+					console.log(res)			 
+					if (Object.keys(res).length>1) {
+						ws.wsInit();
+					}
+				
 				});
 				ws.onMessage(function(e) {
 					var res = JSON.parse(e.data);
@@ -332,11 +342,14 @@
 								touid: res.wsclient_to,
 								content: res.content,
 								time: res.time,
+								user_head:res.user_head,
+								nickname:res.nickname,
+								userid:res.userid,
 								isme: uid == res.wsclient_from ? true : false
 							}
 								
 							that.addMsg(json);
-							//chatDb.addGroup(json);
+							 
 							setTimeout(function() {
 								uni.pageScrollTo({
 									scrollTop: 1000000

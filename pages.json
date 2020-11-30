@@ -1,62 +1,91 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
+	"pages": [{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "deituiIM"
+				"navigationBarTitleText": "缘分"
 			}
-		},{
-			"path":"pages/livepusher/index"
-		},{
-			"path":"pages/login/index"
-		},{
-			"path":"pages/login/findpwd"
-		},{
-			"path":"pages/register/index"
-		}
-		
-		,{
-			"path":"pages/index/pm",
+		}, {
+			"path": "pages/index/indexmsg",
 			"style": {
-				"navigationBarTitleText": "私聊"
-				 
+				"navigationBarTitleText": "消息"
 			}
-		},{
-			"path":"pages/index/chat",
+		}, {
+			"path": "pages/livepusher/index"
+		}, {
+			"path": "pages/article/index",
 			"style": {
-				"navigationBarTitleText": "粉丝团"
+				"navigationBarTitleText": "资讯中心"
 			}
-		},{
-			"path":"pages/contact/index",
+		}, {
+			"path": "pages/article/list",
 			"style": {
-				"navigationBarTitleText": "通讯录"
+				"navigationBarTitleText": "资讯列表"
 			}
-		},{
-			"path":"pages/follow/index",
-			"style":{
-				"navigationBarTitleText":"粉丝关注"
+		}, {
+			"path": "pages/article/show",
+			"style": {
+				"navigationBarTitleText": "资讯详情"
+			}
+		}, {
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登陆"
 			}
 		},
 		{
-			"path":"pages/pm/index",
-			"style":{
-				"navigationBarTitleText":"我的私信"
+			"path": "pages/login/findpwd",
+			"style": {
+				"navigationBarTitleText": "找回密码"
 			}
-		},{
-			"path":"pages/pm/detail",
-			"style":{
-				"navigationBarTitleText":"私信"
-			} 
+		},
+		{
+			"path": "pages/register/index",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
 		}
-		,{
-			"path":"pages/user/index",
-			"style":{
-				"navigationBarTitleText":"我的"
+
+		, {
+			"path": "pages/index/pm",
+			"style": {
+				"navigationBarTitleText": "私聊"
+
 			}
-		},{
-			"path":"pages/user/info",
-			"style":{
-				"navigationBarTitleText":"用户信息编辑"
+		}, {
+			"path": "pages/index/chat",
+			"style": {
+				"navigationBarTitleText": "粉丝团"
+			}
+		}, {
+			"path": "pages/contact/index",
+			"style": {
+				"navigationBarTitleText": "通讯录"
+			}
+		}, {
+			"path": "pages/follow/index",
+			"style": {
+				"navigationBarTitleText": "粉丝关注"
+			}
+		},
+		{
+			"path": "pages/pm/index",
+			"style": {
+				"navigationBarTitleText": "我的私信"
+			}
+		}, {
+			"path": "pages/pm/detail",
+			"style": {
+				"navigationBarTitleText": "私信"
+			}
+		}, {
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		}, {
+			"path": "pages/user/info",
+			"style": {
+				"navigationBarTitleText": "用户信息编辑"
 			}
 		},
 		{
@@ -66,60 +95,69 @@
 			}
 		},
 		{
-			"path":"pages/user/password",
-			"style":{
-				"navigationBarTitleText":"修改密码"
+			"path": "pages/user/password",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},{
+			"path": "pages/user/gender",
+			"style": {
+				"navigationBarTitleText": "性别"
 			}
 		},
 		{
-			"path":"pages/user/paypwd",
-			"style":{
-				"navigationBarTitleText":"支付密码"
+			"path": "pages/user/paypwd",
+			"style": {
+				"navigationBarTitleText": "支付密码"
 			}
 		},
 		{
-			"path":"pages/user/user_head",
-			"style":{
-				"navigationBarTitleText":"头像"
+			"path": "pages/user/user_head",
+			"style": {
+				"navigationBarTitleText": "头像"
 			}
 		},
 		{
-			"path":"pages/news/index",
-			"style":{
-				"navigationBarTitleText":"广场"
+			"path": "pages/news/index",
+			"style": {
+				"navigationBarTitleText": "广场"
 			}
-		},{
-			"path":"pages/match/index",
-			"style":{
-				"navigationBarTitleText":"无聊的人"
+		}, {
+			"path": "pages/match/index",
+			"style": {
+				"navigationBarTitleText": "无聊的人"
 			}
-		},{
-			"path":"pages/comment/my",
-			"style":{
-				"navigationBarTitleText":"我的评论"
+		}, {
+			"path": "pages/comment/my",
+			"style": {
+				"navigationBarTitleText": "我的评论"
 			}
-		},{
+		}, {
 			"path": "pages/html/aboutus",
 			"style": {
 				"navigationBarTitleText": "关于我们"
-			}  
-		},{
+			}
+		}, {
 			"path": "pages/notice/my",
 			"style": {
 				"navigationBarTitleText": "通知"
 			}
-		},{
+		}, {
 			"path": "pages/kefu/index",
 			"style": {
 				"navigationBarTitleText": "客服"
 			}
 		}, {
-			"path":"pages/gold/buy"
-		},{
-			"path":"pages/friend_apply/index","style":{
-				"navigationBarTitleText":"新朋友"
+			"path": "pages/gold/buy",
+			"style":{
+				"navigationBarTitleText":"购买金币"
 			}
-		},{
+		}, {
+			"path": "pages/friend_apply/index",
+			"style": {
+				"navigationBarTitleText": "新朋友"
+			}
+		}, {
 			"path": "pages/recharge/my",
 			"style": {
 				"navigationBarTitleText": "支付记录"
@@ -142,80 +180,127 @@
 			"style": {
 				"navigationBarTitleText": "消费记录"
 			}
-		}
-		
-	],
-	"subPackages":[
+		},{
+			"path":"pages/invite/my",
+			"style":{
+				"navigationBarTitleText":"邀请好友"
+			}
+		},
 		{
-				"root": "pagesblog",
-				"pages": [{
-						"path": "sblog/index",
-						"style": {
-							"navigationBarTitleText": "广场"
-						}
-					},
-					{
-						"path": "sblog_blog/show",
-						"style":{
-							"navigationBarTitleText":"详情"
-						}
-					},
-					{
-						"path": "sblog_blog/topic",
-						"style":{
-							"navigationBarTitleText":"话题"
-						}
-					},
-					{
-						"path": "sblog_blog/add",
-						"style":{
-							"navigationBarTitleText":"发布帖子"
-						}
-					},
-					{
-						"path": "sblog_blog/my",
-						"style": {
-							"navigationBarTitleText": "我的帖子"
-						}
-					},
-					{
-						"path": "sblog_blog/search",
-						"style":{
-							"navigationBarTitleText":"搜索"
-						}
-					},
-					{
-						"path": "sblog_user/index",
-						"style": {
-							"navigationBarTitleText": "个人中心"
-						}
-					},
-					{
-						"path": "sblog_people/index",
-						"style": {
-							"navigationBarTitleText": "白茶人"
-						}
-					},
-					{
-						"path": "sblog_home/index",
-						"style": {
-							"navigationBarTitleText": "主页"
-						}
-					},
-					{
-						"path": "sblog_blog_comment/my",
-						"style": {
-							"navigationBarTitleText": "我的评论"
-						}
-					}  
-				]
-		
-			}	
+			"path": "pages/gold_log/my",
+			"style": {
+				"navigationBarTitleText": "消费记录"
+			}
+		},
+		{
+			"path": "pages/help/index",
+			"style": {
+				"navigationBarTitleText": "帮助与反馈"
+			}
+		}
+
 	],
+	"subPackages": [{
+		"root": "pagesblog",
+		"pages": [{
+				"path": "sblog/index",
+				"style": {
+					"navigationBarTitleText": "动态"
+				}
+			},
+			{
+				"path": "sblog_blog/show",
+				"style": {
+					"navigationBarTitleText": "详情"
+				}
+			},
+			{
+				"path": "sblog_blog/topic",
+				"style": {
+					"navigationBarTitleText": "话题"
+				}
+			},
+			{
+				"path": "sblog_blog/add",
+				"style": {
+					"navigationBarTitleText": "发布帖子"
+				}
+			},
+			{
+				"path": "sblog_blog/my",
+				"style": {
+					"navigationBarTitleText": "我的帖子"
+				}
+			},
+			{
+				"path": "sblog_blog/search",
+				"style": {
+					"navigationBarTitleText": "搜索"
+				}
+			},
+			{
+				"path": "sblog_user/index",
+				"style": {
+					"navigationBarTitleText": "个人中心"
+				}
+			},
+			{
+				"path": "sblog_people/index",
+				"style": {
+					"navigationBarTitleText": "白茶人"
+				}
+			},
+			{
+				"path": "sblog_home/index",
+				"style": {
+					"navigationBarTitleText": "主页"
+				}
+			},
+			{
+				"path": "sblog_blog_comment/my",
+				"style": {
+					"navigationBarTitleText": "我的评论"
+				}
+			}
+		]
+
+	}, {
+		"root": "pagezblive",
+		"pages": [{
+				"path": "zblive/index",
+				"style": {
+					"navigationBarTitleText": "直播"
+				}
+			},
+			{
+				"path": "zblive/live",
+				"style": {
+					"navigationBarTitleText": "开启直播"
+				}
+			},
+			{
+				"path": "zblive/show",
+				"style": {
+					"navigationBarTitleText": "直播详情"
+				}
+			}
+
+		]
+	},{
+		"root":"im",
+		"pages":[
+			{
+				"path":"im_gift_send/receive",
+				"style":{
+					"navigationBarTitleText":"收到的礼物"
+				}
+			}
+		]
+	}],
 	"preloadRule": {
 		"pages/index/index": {
 			"network": "all",
-			"packages": ["pagesblog"]
+			"packages": ["pagesblog", "pagezblive"]
 		}
 	},
 	"globalStyle": {

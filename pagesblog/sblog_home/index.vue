@@ -18,6 +18,7 @@
 			<view v-if="user.description==''" class="uBox-desc">该用户一句话也没留下</view>
 			<view v-else class="uBox-desc">{{user.description}}</view>
 		</div>
+		<div class="emptyData" v-if="!list || list.length==0">暂无数据</div>
 		<div v-for="(item,index) in list" :key="index" @click="goBlog(item.id)" class="sglist-item">
 			
 			<div class="sglist-title flex" v-html="item.content"></div>

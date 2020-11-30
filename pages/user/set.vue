@@ -8,11 +8,16 @@
 					<view class="flex-1"> {{pageData.data.nickname}}</view>
 					 
 				</view>
+				<view class="row-item" @click="gourl('../user/gender')" >
+					<view class="row-item-icon icon-female"></view>
+					<view class="flex-1">性别</view>
+				</view>
 				
 				<view class="row-item" @click="gourl('../user/password')" >
 					<view class="row-item-icon icon-password"></view>
 					<view class="flex-1">登录密码</view>
 				</view>
+				
 				<view class="row-item" @click="gourl('../user/paypwd')" >
 					<view class="row-item-icon icon-password"></view>
 					<view class="flex-1">支付密码</view>

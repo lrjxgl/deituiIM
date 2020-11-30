@@ -37,6 +37,9 @@
 <script>
 	import dtPay from "../common/dtpay.js";
 	export default {
+		props:{
+			touserid:0
+		},
 		data: function() {
 			return {
 				giftList: [],
@@ -98,6 +101,9 @@
 				var that=this;
 				that.app.get({
 					url:that.app.apiHost+"/module.php?m=im_gift&a=send&giftid="+item.giftid,
+					data:{
+						touserid:this.touserid
+					},
 					success:function(res){
 						if(res.error){
 							uni.showToast({

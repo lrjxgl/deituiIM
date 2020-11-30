@@ -1,6 +1,7 @@
 <template>
 	<view>
-		<view v-if="isFriend==0" @click="friendBoxClass='flex-col'" class="add-friend-btn iconfont icon-friend_add_light"></view> 
+	 
+		<view  @click="friendBoxClass='flex-col'" class="add-friend-btn iconfont icon-friend_add_light"></view> 
 		<view class="modal-group" :class="friendBoxClass">
 			<view class="modal-mask" @click="friendBoxClass=''"></view>
 			<view class="modal" style="margin-top: -50px;">
@@ -26,7 +27,7 @@
 		},
 		data:function(){
 			return {
-				isFriend:1,
+				
 				friendBoxClass:"",
 				applyContent:""
 			}
@@ -75,6 +76,7 @@
 <style>
 	.add-friend-btn {
 		position: fixed;
+		z-index: 999;
 		top: 100px;
 		right: 3px;
 		background-color: #15ABA5;
@@ -84,7 +86,10 @@
 		line-height: 30px;
 		border-radius: 20px;
 		text-align: center;
-		display: block;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center; 
 		cursor: pointer;
 	}
 </style>
