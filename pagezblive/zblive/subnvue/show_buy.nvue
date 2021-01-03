@@ -1,0 +1,377 @@
+<template>
+	<div>
+		
+		<div class="ftBox">
+			
+			<scroller  scroll-y="true" class="msgList">
+				<div v-for="(item,index) in msgList" :key="index" class="msgList-item">
+					<div class="msgList-nick"><text class="f12 cl1">{{item.nickname}}</text></div>
+					<div class="msgList-desc"><text class="f12 cl2">{{item.content}}</text></div>
+				</div>
+				 
+			</scroller>
+			
+			<div class="flex flex-ai-center">
+				<div @click="modalGoodShow=true" ><text class="iconfont ftBox-goods">&#xe7f9;</text></div>
+				
+				<template v-if="parseInt(data.zbstatus)==1">
+					
+				<div class="flex-1 pd-5">
+					<input v-model="cmContent" value="a" placeholder="发布你想了解的信息" class="ftBox-text" type="text"></input>
+				</div>
+				<div @click="sendMsg" class="btn-send"><text class="iconfont f22 cl-fff">&#xe940;</text></div>
+				</template>
+			 
+					<div v-else class="flex-1 flex pd-5">
+						<div  class="ftBox-text flex-center" ><text class="cl3">直播结束，不能发布消息了</text></div>
+					</div>
+			 
+			</div>
+			
+			
+		</div>
+		<div id="modal-group-goods" v-if="modalGoodShow" >
+			<div @click="modalGoodShow=false"  class="modal-mask"></div>
+			<div class="modal-goods">
+				<div class="flex pd-10">
+					<div class="flex-1"><text class="cl1 f16">推荐商品</text></div>
+					<div  @click="modalGoodShow=false"  ><text class="iconfont">&#xe7e3;</text></div>
+				</div>
+				<scroll-view scroll-y="true">
+				<div v-for="(item,index) in proList" :key="index" class="flex mgb-10">
+					<image class="wh-60 mgr-10" :src="item.imgurl" ></image>
+					<div class="flex-1">
+						<text class="cl1 f14 mgb-5">{{item.title}}</text>
+						<div class="flex">
+							<text>卷后价</text>
+							<text class="cl-money mgr-5">￥{{item.price}}</text>
+						
+							<div class="flex-1"></div>
+							<div @click="goQuan(item)" class="btn-small"><text class="cl-white">领券立省</text></div>
+						</div>
+					</div>
+				</div>
+				</scroll-view> 
+				
+			</div>
+		</div>
+		
+		 
+	</div>
+	
+</template>
+<script>
+	var room_id;
+	import $app from "../../../common/common.js";
+	var timer=0;
+	export default{
+		data:function(){
+			return {
+				pageLoad:false,
+				data:{},
+				proList:[],
+				msgList:[],
+				cmContent:"",
+				modalGoodShow:false,
+				product:{},
+				productShow:false,
+				m3u8url:"",
+				mp4url:"",
+				modalGoodsClass:""
+				
+			}
+		},
+		created:function(){
+			console.log("oncreated..")
+			var domModule = weex.requireModule("dom");  
+			    domModule.addRule('fontFace', {  
+			           'fontFamily': 'iconfont',  
+			           'src': "url(\'https://at.alicdn.com/t/font_811242_m51pldzccmp.ttf\')"  
+			    }) 
+			console.log("直播 subnvue")	
+			var that=this;
+			that.app=$app;
+			const subNVue = uni.getSubNVueById('zbliveshow');
+			
+			subNVue.onMessage(function(res){
+				switch(res.data.action){
+					case "load":
+						room_id=res.data.room_id;
+						that.getPage();
+						that.getMsgList();
+						if(timer>0){
+							clearInterval(timer);
+						}
+						timer=setInterval(function(){
+							that.getMsgList();
+						},100000);
+						break;
+				}
+			    
+			})	
+		},
+		onLoad:function(){
+			console.log("onload..")
+		},
+		methods:{
+			getPage:function(){
+				
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=zblive&a=show&ajax=1&id="+room_id,
+					dataType:"json",
+					success:function(res){
+						that.data=res.data.zblive;
+						 
+						that.getProList();
+						that.pageLoad=true;
+						that.m3u8url=res.data.m3u8url;
+						that.mp4url=res.data.mp4url;
+					}
+				})
+			},
+			getMsgList:function(){
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=zblive_msg&a=list&ajax=1&room_id="+room_id,
+					dataType:"json",
+					success:function(res){
+						that.msgList=res.data.list;
+					}
+				})
+			},
+			sendMsg:function(){
+				var that=this;
+				if(this.cmContent==''){
+					uni.showToast({
+						title:"请输入内容"
+					})
+					return false;
+				}
+				
+				that.app.post({
+					url:that.app.apiHost+"/module.php?m=zblive_msg&a=save&ajax=1",
+					data:{
+						room_id:room_id,
+						content:this.cmContent
+					},
+					success:function(res){
+						that.cmContent="";
+						that.getMsgList(); 
+					}
+				})
+			},
+			getProList:function(){
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=taoke_searchcache&a=listbyids&ajax=1&ids="+that.data.proids,
+					dataType:"json",
+					success:function(res){					
+						that.proList=res.data.list;
+					}
+				})
+			},
+			goQuan:function(item){
+				var that=this;
+			 
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=taoke_search&a=getpwd&ajax=1&id="+item.id,
+					dataType:"json",
+					success:function(res){
+						if(res.error){
+							uni.showToast({
+								title:res.message
+							})
+							return false;
+						}
+						uni.setClipboardData({
+							data: res.data,
+							success: function() {
+								that.goTaobao();
+							}
+						});
+					}
+				})
+			}, 
+			goTaobao: function() {
+				uni.showToast({
+					title:"正在前往淘宝"
+				})
+				// #ifdef APP-PLUS
+				if (plus.os.name == "Android") {
+					plus.runtime.launchApplication({
+							pname: "com.taobao.taobao",
+							extra: {
+								url: "https://m.taobao.com/#index"
+							}
+						},
+						function(e) {
+							uni.showToast({
+								title:"打开淘宝失败，请先安装淘宝"
+							})
+							 
+						}
+					);
+				} else if (plus.os.name == "iOS") {
+					plus.runtime.launchApplication({
+						action: "taobao://"
+					}, function(e) {
+						uni.showToast({
+							title:"打开淘宝失败，请先安装淘宝"
+						})
+					});
+				}
+				// #endif
+			}
+		}
+	}
+</script>
+<style>
+	@import "../../../common/dt-ui-weex.css";
+	.wmax{
+			width: 100%;
+			height: 100%;
+		}
+		.btn-small{
+			background-color: #007BFF;
+			color: #fff;
+			border-radius: 13rpx;
+			padding: 13rpx 26rpx;
+		}
+		.ftBox {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 999;
+		}
+		
+		.ftBox-goods {
+			font-size:  80rpx;
+			color: #f00;	
+		}
+		
+		.ftBox-text {
+		 
+			height: 80rpx;
+			line-height:  80rpx;
+			border-width: 0;
+			border-radius: 12rpx;
+			background-color: #333;
+			opacity: 0.6;
+			flex:1;
+			color: #fff;
+			padding-left: 14rpx;
+		}
+		
+		.btn-send {
+			height: 76rpx;
+			line-height: 76rpx;
+			padding: 0rpx 16rpx;
+			justify-content: center;
+			margin-right: 10rpx;
+			color: #fff;
+		}
+		
+		.msgList {
+			position: fixed;
+			bottom: 120rpx;
+			top: 400rpx;
+			left: 0;
+			right: 0;
+			padding: 18rpx;
+		}
+		
+		.msgList-item {
+			flex-direction: row;
+			margin-bottom: 10rpx;
+		}
+		
+		.msgList-nick {
+			margin-right: 18rpx;
+			color: #f60;
+			font-size: 32rpx;
+		}
+		
+		.msgList-desc {
+			color: #ff0;
+			font-size: 32rpx;
+			flex: 1;
+		}
+		
+		.modal-goods {
+			position: fixed;
+			bottom: 0rpx;
+			left: 0rpx;
+			right: 0rpx;
+			z-index: 999;
+			background-color: #fff;
+		}
+		
+		.modal-share {
+			position: fixed;
+			bottom: 0rpx;
+			left: 0rpx;
+			right: 0rpx;
+			z-index: 999;
+			background-color: #fff;
+		}
+		
+		.mline {
+			margin-bottom: 20rpx;
+			border-style: solid;
+			border-color: #000000;
+			border-bottom-width: 1px;
+		}
+		
+		.btn-quan {
+			font-size: 24rpx;
+			color: #f30;
+			padding: 6rpx;
+			border-style: dotted;
+			border-color: #f30;
+			border-width: 1px;
+		}
+		
+		.btn-ma {
+			width: 320rpx;
+			border-style: dotted;
+			border-color: #f30;
+			border-width: 1px;
+			line-height: 60rpx;
+			height: 60rpx;
+			font-size: 28rpx;
+			text-align: center;
+			margin-bottom: 20rpx;
+			background-color: #fcf6f6;
+			border-radius: 10rpx;
+			color: #f30;
+		}
+		
+		.btn-copy {
+			background-color: #f30; 
+			margin-bottom: 20rpx;
+			padding: 20rpx 40rpx;
+		}
+		
+		.modal-share-close {
+			background-color: #333;
+			position: absolute;
+			right: 0rpx;
+			width: 70rpx;
+			height: 70rpx;
+			color: #fff;
+			border-radius: 50%;
+			opacity: 0.9;
+			top: 0rpx;
+			align-items: center;
+			justify-content: center;
+			z-index:9991;
+		}
+	 .iconfont {  
+	     font-family: iconfont;
+	  
+		   font-size: 68rpx; 
+	 }  
+
+</style>

@@ -1,22 +1,57 @@
 <template>
 	<view>
-		<view id="main">
-			<view class="pd-10 bg-fff">
-
-				<template v-if="list.length>0">
+		
+		<view class="pd-10 bg-fff">
+			<div :id="'lsa'+lsi" v-for="(lsa,lsi) in listArray" :key="lsi">
+				<block v-if="lsa">
+					<view v-for="(item,index) in lsa.list" :key="item.id">
+						<view class="chatbox" v-if="item.userid==user.userid">
+							<view class="flex-1" :a="index"></view>
+							<view class="chatbox-desc-b mgb-5 mgr-5">
+								<chat-msg :content="item.content"></chat-msg>
+							</view>
+			
+							<image :src="item.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
+						</view>
+						<view class="chatbox" v-else>
+							<image :src="item.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
+							<view class="flex-1">
+								<div class="flex">
+									<view class="chatbox-nick-a mgb-5">{{item.nickname}}</view>
+									<div class="flex-1"></div>
+									<date-time :dateline="item.dateline" class="cl3 f12"></date-time>
+								</div>
+								
+								<view class="chatbox-desc-a">
+									<chat-msg :content="item.content"></chat-msg>
+								</view>
+							</view>
+						</view>
+			
+			
+					</view>
+				</block>
+			</div>
+			<view >
+				 
+				<div v-if="list.length>0">
 					<view v-for="(item,index) in list" :key="item.id">
 						<view class="chatbox" v-if="item.userid==user.userid">
 							<view class="flex-1" :a="index"></view>
 							<view class="chatbox-desc-b mgb-5 mgr-5">
 								<chat-msg :content="item.content"></chat-msg>
 							</view>
-							
+
 							<image :src="item.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
 						</view>
 						<view class="chatbox" v-else>
 							<image :src="item.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
 							<view class="flex-1">
-								<view class="chatbox-nick-a mgb-5">{{item.nickname}}</view>
+								<div class="flex">
+									<view class="chatbox-nick-a mgb-5">{{item.nickname}}</view>
+									<div class="flex-1"></div>
+									<date-time :dateline="item.dateline" class="cl3 f12"></date-time>
+								</div>
 								<view class="chatbox-desc-a">
 									<chat-msg :content="item.content"></chat-msg>
 								</view>
@@ -24,7 +59,7 @@
 						</view>
 
 					</view>
-				</template>
+				</div>
 				<template v-else>
 					<view class="emptyData">暂无消息</view>
 				</template>
@@ -49,9 +84,9 @@
 					<!-- #endif -->
 					<view @click="emoClass='flex-col'" class="flex-1 iconfont icon-emoji f20"></view>
 					<view @click="choiceFile('file')" class="flex-1 iconfont none icon-file f20 "></view>
-					 
+
 				</view>
-			
+
 			</view>
 			<view id="emoModal" :class="emoClass" class="modal-group">
 				<view class="modal-mask" @click="emoClass=''"></view>
@@ -90,16 +125,17 @@
 	import chatDb from "../../common/chatdb.js"
 	import chatMsg from "../../components/chatmsg.vue";
 	import emo from "../../common/emo.js";
+	import dateTime from "../../components/datetime.vue";
 	var gid;
 	var groupid;
 	var uid = Date.parse(new Date());
 	var touid = ""
 	var ws;
 	var inPage = false;
-	var windowHeight=0;
+	var windowHeight = 0;
 	var lastMsg;
 	var audioRecord;
-	var inAjax=false;
+	var inAjax = false;
 	const aRecordOptions = {
 		duration: 10000,
 		sampleRate: 44100,
@@ -108,51 +144,58 @@
 		format: 'mp3',
 		frameSize: 50
 	}
+	var listArray=[];
+	for(var i=0;i<=30;i++){
+		listArray.push({});
+	}
 	export default {
 		components: {
-			chatMsg
+			chatMsg,
+			dateTime
 		},
 		data: function() {
 			return {
 				per_page: 0,
 				list: [],
+				listMaxId: 30,
+				listArrayIndex: 30,
+				listArray: listArray,
 				content: "",
 				wsConn: false,
 				group: {},
 				user: {},
 				toUser: {},
 				emoList: [],
-				sch: 0,
-				oldsch: 0,
+				 
 				scrollTop: 10000,
 				emoClass: "",
 				aRecordClass: "",
 				aRecordIng: false,
-				time:0,
-				showVideo:false,
-				videoUrl:"",
-				sfTop:210,
+				time: 0,
+				showVideo: false,
+				videoUrl: "",
+				sfTop: 210,
 			}
 		},
-		onPageScroll:function(e){
-			if(e.scrollTop==0 && !inAjax){
-				this.getList();
-				inAjax=true;
-				setTimeout(function(){
-					inAjax=false;
-				},1000);
+		onPageScroll: function(e) {
+			if (e.scrollTop == 0 && !inAjax) {
+				this.getOldList();
+				inAjax = true;
+				setTimeout(function() {
+					inAjax = false;
+				}, 1000);
 			}
 		},
 		onLoad: function(ops) {
-			var sys=uni.getSystemInfoSync()
-			windowHeight=sys.windowHeight;	
+			var sys = uni.getSystemInfoSync()
+			windowHeight = sys.windowHeight;
 			var that = this;
 			this.emoList = emo.emoList();
-			groupid=ops.groupid;
+			groupid = ops.groupid;
 			this.getPage();
-			
+
 			//#ifndef H5
-			this.sfTop=160;
+			this.sfTop = 160;
 			audioRecord = wx.getRecorderManager();
 
 
@@ -169,19 +212,19 @@
 			//#endif
 
 		},
-		onUnload:function(){
+		onUnload: function() {
 			console.log("onUnload")
 			if (inPage) {
 				return false;
 			}
-			console.log("关闭WS") 
+			console.log("关闭WS")
 			ws.close({
 				success: function(res) {
-			
+
 				}
 			});
 		},
-		
+
 		onShow: function() {
 			if (inPage) {
 				return false;
@@ -191,78 +234,72 @@
 				that.wsInit();
 			}
 		},
+		watch:{
+			listArray:function(n,o){
+				console.log("listArray",n)
+			}
+		},
 		methods: {
-			inArray:function(a,b){
-				for(var i in b){
-					if(a.id==b[i].id) return true;
+			inArray: function(a, b) {
+				for (var i in b) {
+					if (a.id == b[i].id) return true;
 				}
 				return false;
 			},
-			chatMsgEven:function(res){
-				switch(res.type){
+			chatMsgEven: function(res) {
+				switch (res.type) {
 					case "gift":
 						this.acceptGift(res.giftid);
 						break;
 					case "showVideo":
-						this.videoUrl=res.url;
-						this.showVideo=true;
+						this.videoUrl = res.url;
+						this.showVideo = true;
 						break;
 				}
 			},
-			scrollY: function(e) {
-				this.sch = e.detail.scrollHeight;
-			},
-			scTop: function(e) {
-				if (this.oldsch == 0) {
-					this.oldsch = this.sch;
-				}
-
+			 
+			getOldList: function() {
 				var that = this;
-				that.scrollTop = 0;
-				this.getList();
-			},
-			getList: function() {
-				this.time=Date.parse(new Date())/1000;
-				var that = this;
+			
+				const query = uni.createSelectorQuery().in(that);
 				if (this.per_page == 0) return false;
+				
+				that.loadIng = true;
 				that.app.get({
 					url: that.app.apiHost + "/module.php?m=im_group&a=home&ajax=1&groupid=" + groupid,
 					data: {
 						per_page: that.per_page
 					},
 					success: function(res) {
+						 
 						that.per_page = res.data.per_page;
-						var list = that.list;
-						for (var i in res.data.list) {
-							if(!that.inArray(res.data.list[i],list)){
-								list.unshift(res.data.list[i]);
-							}
-							
-						}						
-						that.list =list;
-						setTimeout(function() {
-							that.scrollTop += 10;
-						}, 100)
-						setTimeout(function(){
-							const query = uni.createSelectorQuery().in(that);
-							 query.select('#main').boundingClientRect(res => {
-								if(that.oldsch==0){
-									uni.pageScrollTo({
-										scrollTop:100000
-									})
-								}else{
-									var st=res.height-that.oldsch;//res.height-that.oldsch-windowHeight+that.sfTop;
-									console.log(st);
-									uni.pageScrollTo({
-										scrollTop:st
-									})
-								}
-								that.oldsch=res.height;
+						var list=[];
+						for(var i in that.listArray){
+							list.push(that.listArray[i]);
+						}
+						list[that.listArrayIndex] = {list: res.data.list};
+						that.listArray=list;
+						var elIndex = that.listArrayIndex;
+						that.listArrayIndex--;
+						console.log(that.listArray)
+						
+						that.$nextTick(function() {
+							that.loadIng = false;
+							console.log('#lsa' + elIndex)
+							query.select('#lsa' + elIndex).boundingClientRect(e => {
+								console.log(e);
+								uni.pageScrollTo({
+									scrollTop: e.height,
+									duration: 1
+								})
 							}).exec();
-						},100)
+						})
+						
+						
 					}
 				})
 			},
+
 			getPage: function() {
 				var that = this;
 
@@ -272,24 +309,24 @@
 						gid = res.data.ws_gid;
 						that.per_page = res.data.per_page;
 						that.group = res.data.group;
-						that.user=res.data.user;
+						that.user = res.data.user;
 						uni.setNavigationBarTitle({
 							title: res.data.group.title
 						})
-						
+
 						that.list = res.data.list;
 						that.wsInit();
 						setTimeout(function() {
 							that.wsConn = true;
 						}, 1000)
-						var it=setTimeout(function(){
+						var it = setTimeout(function() {
 
 							uni.pageScrollTo({
-								scrollTop:3000,
-								duration:30
+								scrollTop: 3000,
+								duration: 30
 							})
-							
-						},300)
+
+						}, 300)
 					}
 				})
 			},
@@ -320,11 +357,11 @@
 					});
 				});
 				ws.onError(function(res) {
-					console.log(res)			 
-					if (Object.keys(res).length>1) {
+					console.log(res)
+					if (Object.keys(res).length > 1) {
 						ws.wsInit();
 					}
-				
+
 				});
 				ws.onMessage(function(e) {
 					var res = JSON.parse(e.data);
@@ -342,14 +379,14 @@
 								touid: res.wsclient_to,
 								content: res.content,
 								time: res.time,
-								user_head:res.user_head,
-								nickname:res.nickname,
-								userid:res.userid,
+								user_head: res.user_head,
+								nickname: res.nickname,
+								userid: res.userid,
 								isme: uid == res.wsclient_from ? true : false
 							}
-								
+
 							that.addMsg(json);
-							 
+							
 							setTimeout(function() {
 								uni.pageScrollTo({
 									scrollTop: 1000000
@@ -397,9 +434,9 @@
 					type: "say",
 					gid: gid,
 					content: content,
-					user_head:that.user.user_head,
-					nickname:that.user.nickname,
-					userid:that.user.userid
+					user_head: that.user.user_head,
+					nickname: that.user.nickname,
+					userid: that.user.userid
 				});
 
 				lastMsg = msg;
@@ -577,6 +614,7 @@
 		top: 0px;
 		bottom: 80px;
 	}
+
 	.add-friend-btn {
 		position: fixed;
 		bottom: 200px;

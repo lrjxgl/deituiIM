@@ -1,0 +1,57 @@
+<template>
+	<div  class="giftBox">
+		<div class="flex flex-ai-center  animated fadeInLeft">
+			<text class="f12 cl2">{{gift.nickname}}</text> 
+			<text class="f12 cl2">送了</text> 
+			<image class="gift-img " :src="gift.imgurl"></image>
+			<text class="f12 cl2">{{gift.title}}</text>
+		</div>
+	</div>
+	
+</template>
+
+<script>
+	export default{
+		name:"gift-animate",
+		props:{
+			"gift":{}
+		},
+		created:function(){
+			console.log(this.gift)
+			return {
+				a:1
+			}
+			var domModule = weex.requireModule("dom");
+			    domModule.addRule('fontFace', {  
+			           'fontFamily': 'iconfont',  
+			           'src': "url(\'https://at.alicdn.com/t/font_811242_m51pldzccmp.ttf\')"  
+			    }) 
+		},
+		watch:{
+			gift:function(n,o){
+				
+			}
+		},
+		methods: {
+			
+			getPage() {
+				
+			}
+		},
+	}
+</script>
+
+<style>
+	@import url("../common/dt-ui-nvue.css");
+	.giftBox{
+		background-color: #000;
+		opacity: 0.6;
+		padding: 6px 10px;
+	} 
+	.gift-img{
+		width: 30px;
+		height: 30px;
+		border-radius: 30px;
+	} 
+</style>
+ 

@@ -1,14 +1,14 @@
 <template>
 	<view>
-		<view class="gTab">
-			<view @click="tab='hot'" :class="{'gTab-active':tab=='hot'}" class="gTab-item">热门
+		<view class="gTab mgb-5">
+			<view @click="setTab('hot')" :class="{'gTab-active':tab=='hot'}" class="gTab-item">热门
 				<view v-if="tab=='hot'" class="gTab-dot"></view>
 			</view>
-			<view @click="tab='near'" :class="{'gTab-active':tab=='near'}" class="gTab-item">
+			<view @click="setTab('near')" :class="{'gTab-active':tab=='near'}" class="gTab-item">
 				附近
 				<view v-if="tab=='near'" class="gTab-dot"></view>
 			</view>
-			<view @click="tab='follow'" :class="{'gTab-active':tab=='follow'}" class="gTab-item">
+			<view @click="setTab('follow')" :class="{'gTab-active':tab=='follow'}" class="gTab-item">
 				关注
 				<view v-if="tab=='follow'" class="gTab-dot"></view>
 			</view>
@@ -18,108 +18,31 @@
 			<!-- #endif --> 
 			
 		</view>
+		<swiper :style="{height:swiperHeight+'px'}"  :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000">
+			<swiper-item v-for="(item,key) in  flashList" :key="key">
+				<view class="swiper-item">
+					<image @click="gourl(item.link1)" :src="item.imgurl" style="width:100%" mode="widthFix"></image>
+				</view>
+			</swiper-item>
+		 
+		</swiper> 
 		<view class="row-box">
-			<image  class="wone" mode="widthFix" src="../../static/phb.png"></image>
-		</view>	
-		<view class="row-box">
+			<view v-if="!list || Object.keys(list).length==0" class="emptyData">暂无直播</view>
 			<view class="zbList">
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v1.png"></image>
+				<view @click="goDetail(item.id)" v-for="(item,index) in list" :key="index" class="zbBox">
+					<image class="zbBox-img" mode="widthFix" :src="item.imgurl+'.100x100.jpg'"></image>
 					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
+						<view class="zbBox-nick">{{item.nickname}}</view>
 						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
+							 
+							<view class="cl3 f12">{{item.city}}</view>
 							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
+							<view class="cl3 f12">{{item.view_num}}</view>
 						</view>
 					</view>
 					
 				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v2.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
-						</view>
-					</view>
-				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v3.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
-						</view>
-					</view>
-				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v4.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
-						</view>
-					</view>
-				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v1.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
-						</view>
-					</view>
-				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v2.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
-						</view>
-					</view>
-				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v3.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="cl3 f12">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="cl3 f12">322</view>
-						</view>
-					</view>
-				</view>
-				<view class="zbBox">
-					<image class="zbBox-img" mode="widthFix" src="../../static/v4.png"></image>
-					<view class="zbBox-ft">
-						<view class="zbBox-nick">凉凉</view>
-						<view class="flex">
-							<view class="zbBox-bt">1</view>
-							<view class="zbBox-ft-c">福鼎</view>
-							<view class="flex-1"></view>
-							<view class="zbBox-ft-c">322</view>
-						</view>
-					</view>
-				</view>
+				 
 			</view>
 		</view>
 		<mt-footer tab="zblive"></mt-footer>
@@ -134,13 +57,88 @@
 		},
 		data:function(){
 			return {
-				tab:"hot"
+				tab:"hot",
+				list:[],
+				isFirst:true,
+				per_page:0,
+				flashList:[],
+				swiperHeight:220
 			}
 		},
+		onLoad:function(){
+			const res = uni.getSystemInfoSync();
+			var winWidth=res.windowWidth;
+			this.swiperHeight=winWidth/3;
+			this.getPage();
+		},
+		onReachBottom:function(){
+			this.getList();
+		},
+		onPullDownRefresh:function(){
+			this.getPage();
+			uni.stopPullDownRefresh();
+		},
 		methods:{
+			gourl:function(url){
+				uni.navigateTo({
+					url:url
+				})
+			},
+			setTab:function(t){
+				this.tab=t;
+				this.isFirst=true;
+				this.per_page=0;
+				this.getList();
+			},
 			goLive:function(){
 				uni.navigateTo({
 					url:"live?room_id=19"
+				})
+			},
+			goDetail:function(id){
+				uni.navigateTo({
+					url:"show?id="+id
+				})
+			},
+			getPage:function(){
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=zblive&type=doing",
+					success:function(res){
+						if(res.error){
+							return false;
+						}
+						that.flashList=res.data.flashList;
+						that.per_page=res.data.per_page;
+						that.list=res.data.list;
+					}
+				})
+			},
+			getList:function(){
+				var that=this;
+				if(that.per_page==0 && !that.isFirst){
+					return false;
+				}
+				that.app.get({
+					url:that.app.apiHost+"/module.php?m=zblive&type=doing",
+					data:{
+						tab:this.tab,
+						per_page:this.per_page
+					},
+					success:function(res){
+						if(res.error){
+							return false;
+						}
+						if(that.isFirst){
+							that.list=res.data.list;
+							that.isFirst=false;
+						}else{
+							for(var i in res.data.list){
+								that.list.push(res.data.list[i]);
+							}
+						}
+						that.per_page=res.data.per_page;
+					}
 				})
 			}
 		}

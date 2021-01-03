@@ -1,52 +1,68 @@
 <template>
 	<div>
-		<div>
+		<div v-if="!inLive">
+			<div class="row-box">
+				<div class="input-flex">
+					<div class="input-flex-label">直播标题</div>
+					<input v-model="zblive.title" type="text"   class="input-flex-text" maxlength="225" />
+				</div>	
+				<div class="flex">
+					<textarea v-model="zblive.content" placeholder="内容简介" class="textarea-flex-text" maxlength="225"></textarea>
+				</div>
+				<div class="flex">
+					<div @click="createLive()" class="btn-row-submit"><text class="btn-row-submit-text">开启直播</text></div>
+				</div>
+				
+			</div>
+			
+		</div>
+		<div v-if="inLive">
 			<div class="ftop">
 				
 				
 							
 			</div>
-			<live-pusher style="width: 100%;" id='livePusher' class="livePusher" ref="livePusher" :url="vurl"
+			<live-pusher v-if="pageLoad" :style="{height:liveHeight}" style="width:100%;"  id='livePusher' class="livePusher" ref="livePusher" :url="vurl"
 			 :mode="vmode" :muted="false" :enable-camera="true" :auto-focus="true" :beauty="vbeauty" :whiteness="whiteness" aspect="9:16" postition="absolute"
 			 @statechange="statechange" @netstatus="netstatus" @error="error"></live-pusher>
 			
 			<div class="ft-row"></div>
 			<div class="ft" >
-				<div class="zb-btn" @click="switchCamera"><text class="cl2">切换</text></div>
+				<div class="zb-btn" @click="switchCamera"><text class="cl2 f16">切换</text></div>
 				 
 				<div class="zb-btn" @longpress="stop()" @click="toggleVideo()">
-					<text class="cl-red" v-if="liveStatus==0">开始直播</text>
-					<text class="cl-red" v-if="liveStatus==1">正在直播</text>
-					<text class="cl-red" v-if="liveStatus==2">直播暂停</text>
+					<text class="cl-red f16" v-if="liveStatus==0">开始直播</text>
+					<text class="cl-red f16" v-if="liveStatus==1">正在直播</text>
+					<text class="cl-red f16" v-if="liveStatus==2">直播暂停</text>
 				</div>
-				<div class="zb-btn" @click="toggleConfig" ><text class="cl2">直播设置</text></div>
+				<div class="zb-btn" @click="toggleConfig" ><text class="cl2 f16">直播设置</text></div>
 				 
 			</div>
 			<div  v-if="vconfig" class="modal-group">
 				<div @click="vconfig=false" class="modal-mask"></div>
 				<div class="modal-config">
-					
-					<div class="flex flex-ai-center">
-							<div>清晰度</div>
+					 
+					<div class="flex mgb-10 flex-ai-center">
+							<text class="f14">清晰度</text>
 							<div class="flex-1">
-								<slider @change="changeSD" :value="vmode" min="0" max="2"   activeColor="#FFCC33" backgroundColor="#000000" block-color="#8A6DE9" block-size="20" />
+								<slider @change="changeSD" :value="vmode" min="0" max="2" activeColor="#FFCC33" backgroundColor="#000000" block-color="#8A6DE9" block-size="20" />
 							</div>
-							<div>{{vmode}}</div>
+							<text>{{vmode}}</text>
 					</div>
-					<div class="flex flex-ai-center">
-						<div>美白</div>
+					<div class="flex mgb-10 flex-ai-center">
+						<text class="f14">美白</text>
 						<div class="flex-1">
 							<slider @change="changemb" :value="vwhiteness" min="0" max="9" show-value="true"  activeColor="#FFCC33" backgroundColor="#000000" block-color="#8A6DE9" block-size="20" />							
 						</div>
 					</div>
-					<div class="flex flex-ai-center">
-						<div>美颜</div> 
+					<div class="flex mgb-10 flex-ai-center">
+						<text class="f14">美颜</text> 
 						<div class="flex-1">
 							<slider @change="changemy" :value="vbeauty" min="0" max="9" show-value="true"  activeColor="#FFCC33" backgroundColor="#000000" block-color="#8A6DE9" block-size="20" />							
 						</div>
 					</div>
 					<div>
-						<text class="text-center cl2">直播开始前设置才会生效</text>
+						<text class="text-center f14 cl2">直播开始前设置才会生效</text>
 					</div>
 					
 				</div>
@@ -61,51 +77,136 @@
 	export default {
 		data: {
 			fil: true,
-			vurl:"rtmp://rtmp.zblive.deitui.com/deitui/zblive4?auth_key=1578397838-0-0-6039a86253565b38caa7437cafb84dff",
+			vurl:"",
 			liveStatus:0,
-			vmode:"SD",
+			vmode:"HD",
 			vbeauty:0,
 			vwhiteness:0,
 			vconfig:false,
-			room_id:4
+			id:19,
+			liveHeight:800,
+			pageLoad:false,
+			inLive:false,
+			zblive:{}
 		},
 		onLoad(ops) {
 			that=this; 
 			//this.context = uni.createLivePusherContext("livePusher", this);
-			this.room_id=ops.room_id;
-			console.log("live.nvue");
-			that.getPage();
+		 
+			var win=uni.getSystemInfoSync();
+			this.liveHeight=win.windowHeight;
+			that.checkLive();
+		},
+		onHide:function(){
+			console.log("Hide Page")
+		},
+		beforeDestroy:function(){
+			console.log("desctroy")
+			$app.get({
+				url:$app.apiHost+"/module.php?m=zblive&a=finish&ajax=1",
+				data:{
+					id:this.id
+				},
+				success:function(res){
+					if(res.error){
+						return false;
+					}
+					 
+				}
+			})
 		},
 		methods: {
-			getPage:function(){
+			checkLive:function(){
 				var that=this;
-				console.log(this.vurl)
-				 
 				$app.get({
-					url:$app.apiHost+"/module.php?m=zblive&a=GetRtmp&ajax=1&id="+this.room_id,
+					url:$app.apiHost+"/module.php?m=zblive&a=checkLive&ajax=1",
 					success:function(res){
-						console.log(res);
+						if(res.error){
+							if(res.error==1){
+								uni.showToast({
+									title:"暂无直播权限"
+								})
+								setTimeout(function(){
+									uni.navigateBack()
+								},1000)
+								
+							}
+							return false;
+						}
+						console.log(res.data.rtmp)
+						that.vurl=res.data.rtmp;
+					 
+						that.inLive=true;
+						that.id=res.data.id;
+						that.pageLoad=true;
+						setTimeout(function(){
+							that.context = uni.createLivePusherContext("livePusher", that);
+							that.start();
+						},300)
+					}
+				})
+			},
+			createLive:function(){
+				var that=this;
+				$app.post({
+					url:$app.apiHost+"/module.php?m=zblive&a=save&ajax=1",
+					data:{
+						title:this.zblive.title,
+						content:this.zblive.content
+					},
+					success:function(res){
 						if(res.error){
 							uni.showToast({
 								title:res.message
 							})
 							return false;
 						}
-						that.vurl=res.data.rtmp;  
-						that.pageLoad=true; 
-						that.context = uni.createLivePusherContext("livePusher", that);
+						console.log(res)
+						that.id=res.data.id;
+						that.vurl=res.data.rtmp;
+						 
+						that.inLive=true;
+						that.pageLoad=true;
+						setTimeout(function(){
+							that.context = uni.createLivePusherContext("livePusher", that);
+							that.start();
+						},300)
+					}
+				})
+			},
+			getPage:function(){
+				var that=this;
+				
+				 
+				$app.get({
+					url:$app.apiHost+"/module.php?m=zblive&a=GetRtmp&ajax=1&id="+this.room_id,
+					success:function(res){
+						console.log(res.data.rtmp);
+						if(res.error){
+							uni.showToast({
+								title:res.message
+							})
+							return false;
+						}
+						that.vurl=res.data.rtmp; 
+						that.id=res.data.id;
+						that.pageLoad=true;
+						setTimeout(function(){
+							that.context = uni.createLivePusherContext("livePusher", that);
+						},300) 
+						
 					}  
 				})
 				
 			},
 			statechange(e) {
-				console.log("statechange:" + JSON.stringify(e));
+				//console.log("statechange:" + JSON.stringify(e));
 			},
 			netstatus(e) {
-				console.log("netstatus:" + JSON.stringify(e));
+				//console.log("netstatus:" + JSON.stringify(e));
 			},
 			error(e) {
-				console.log("error:" + JSON.stringify(e));
+				//console.log("error:" + JSON.stringify(e));
 			},
 			toggleConfig:function(){
 				if(this.vconfig){
@@ -158,14 +259,14 @@
 				this.context.close({
 					success: (a) => {
 						that.liveStatus=0;
-						console.log("livePusher.close:" + JSON.stringify(a));
+						//console.log("livePusher.close:" + JSON.stringify(a));
 					}
 				});
 			},
 			snapshot: function() {
 				this.context.snapshot({
 					success: (e) => {
-						console.log(JSON.stringify(e));
+						//console.log(JSON.stringify(e));
 					}
 				});
 			},
@@ -194,21 +295,21 @@
 			switchCamera: function() {
 				this.context.switchCamera({
 					success: (a) => {
-						console.log("livePusher.switchCamera:" + JSON.stringify(a));
+						//console.log("livePusher.switchCamera:" + JSON.stringify(a));
 					}
 				});
 			},
 			startPreview: function() {
 				this.context.startPreview({
 					success: (a) => {
-						console.log("livePusher.startPreview:" + JSON.stringify(a));
+						//console.log("livePusher.startPreview:" + JSON.stringify(a));
 					}
 				});
 			},
 			stopPreview: function() {
 				this.context.stopPreview({
 					success: (a) => {
-						console.log("livePusher.stopPreview:" + JSON.stringify(a));
+						//console.log("livePusher.stopPreview:" + JSON.stringify(a));
 					}
 				});
 			}
@@ -217,42 +318,43 @@
 </script>
 
 <style>
+	@import "../../common/dt-ui-nvue.css";
 .ftop{
 	position: fixed;
-	top:0px;
+	top:0rpx;
 	left: 0;
 	right: 0;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: 13px;
+	padding: 26rpx;
 }
 .ft-row{
-	height: 110px;
+	height: 220rpx;
 }
 .ft{
 	position: fixed;
-	bottom:0px;
+	bottom:0rpx;
 	left: 0;
 	right: 0;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: 13px;
+	padding: 26rpx;
 }
 .zb-btn{
-	border-radius: 40px;
-	padding: 12px 22px;
+	border-radius: 80rpx;
+	padding: 24rpx 44rpx;
 	border-color: #f30;
-	border-width: 2px;
+	border-width: 4rpx;
 	border-style: solid;
 	color: #f30;
-
+	font-size: 30px;
 }
 .modal-config{
 	position: fixed;
-	bottom:132px;
+	bottom:220rpx;
 	left: 0;
 	right: 0;
-	padding: 22px;
+	padding: 44rpx;
 	background-color: #fff;
 }
 </style>

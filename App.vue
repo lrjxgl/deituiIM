@@ -14,10 +14,13 @@
 
 <style>
 	/*每个页面公共css */
+	/* #ifndef APP-NVUE */
 	@import "./common/iconfont.css";
 	@import "./common/dt-ui-uni.css";
 	@import "./common/chat.css";
-	@import "./common/emo.css"; 
+	@import "./common/emo.css";
+	/* #endif */
+	 
 	 
 .input-flex-btn{
 	z-index: 2;

@@ -3,6 +3,31 @@
 		<view class="main" id="main">
 			<page-loading v-if="loadIng"></page-loading>
 			<view class=" pd-10 bg-fff">
+				<div>
+				<div :id="'lsa'+lsi" :tid="lsi" v-for="(lsa,lsi) in listArray" :key="lsi">
+					<block  v-if="lsa">
+					<view  v-for="(item,index) in lsa.list"   :key="item.id">
+						<view class="chatbox" v-if="item.isme">
+							<view class="flex-1"></view>
+							<view class="chatbox-desc-b">
+							<chat-msg v-on:call-parent="chatMsgEven" :content="item.content"></chat-msg>
+							</view>
+							<image @click="goHome(user.userid)" :src="user.user_head+'.100x100.jpg'" class="wh-40 mgl-10 bd-radius-10"></image>
+						</view>
+						<view class="chatbox" v-else>
+							<image @click="goHome(touser.userid)" :src="touser.user_head+'.100x100.jpg'" class="wh-40 mgr-10 bd-radius-10"></image>
+							<view class="chatbox-desc-a">
+							<chat-msg  v-on:call-parent="chatMsgEven" :content="item.content"></chat-msg>
+							</view>
+							<view class="flex-1">
+								
+							</view>
+						</view>
+					
+					</view>
+					</block>
+				</div>
+				</div>
 				<template v-if="list.length>0">
 					<view v-for="(item,index) in list"  :id="item.id" :key="item.id">
 						<view class="chatbox" v-if="item.isme">
@@ -121,7 +146,10 @@
 		},
 		data: function() {
 			return {
-				"list": [],
+				list: [],
+				listMaxId:30,
+				listArrayIndex:30,
+				listArray:[],
 				content: "",
 				wsConn: false,
 				user: {},
@@ -147,7 +175,7 @@
 		},
 		onPageScroll:function(e){
 			if(e.scrollTop==0 && !inAjax){
-				this.getList();
+				this.getOldList();
 				inAjax=true;
 				setTimeout(function(){
 					inAjax=false;
@@ -238,8 +266,8 @@
 				},10)
 				
 			},
-			sendGifts:function(giftSendId){
-				this.send("gift",giftSendId);
+			sendGifts:function(gift){
+				this.send("gift",gift.giftid);
 				this.giftShow=false;
 			},
 			
@@ -285,10 +313,9 @@
 				}
 				return false;
 			},
-			getList: function() {
-				this.time=Date.parse(new Date())/1000;
-				if (this.per_page == 0) return false;
+			getOldList: function() {
 				var that = this;
+				if (this.per_page == 0) return false;
 				that.loadIng = true;
 				that.app.get({
 					url: that.app.apiHost + "/module.php?m=im_pm&touserid=" + that.touser.userid,
@@ -297,35 +324,30 @@
 					},
 					success: function(res) {
 						that.per_page = res.data.per_page;
-						var list = that.list;
-						for (var i in res.data.list) {
-							if(!that.inArray(res.data.list[i],list)){
-								list.unshift(res.data.list[i]);
-							}
-							
+						var list=[];
+						for(var i in that.listArray){
+							list.push(that.listArray[i]);
 						}
-						that.list = list;
-						setTimeout(function(){
+						list[that.listArrayIndex] = {list: res.data.list};
+						that.listArray=list;
+						that.listArrayIndex--;
+						that.$nextTick(function(){
+							that.loadIng = false;
 							const query = uni.createSelectorQuery().in(that);
-							 query.select('#main').boundingClientRect(res => {
-								if(that.oldsch==0){
-									uni.pageScrollTo({
-										scrollTop:100000
-									})
-								}else{
-									var st=res.height-that.oldsch;
-									uni.pageScrollTo({
-										scrollTop:st,
-										duration:30
-									})
-								}
-								that.oldsch=res.height;
+							console.log('#lsa'+(that.listArrayIndex+1))
+							query.select('#lsa'+(that.listArrayIndex+1)).boundingClientRect(res => {
+							 
+								uni.pageScrollTo({
+									scrollTop:res.height, 
+									duration:1
+								})
 							}).exec();
-						},100)
-						that.loadIng = false;
+						}) 
+						
 					}
 				})
 			},
+			
 			wsInit: function() {
 				var that = this;
 

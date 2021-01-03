@@ -269,7 +269,8 @@
 		"pages": [{
 				"path": "zblive/index",
 				"style": {
-					"navigationBarTitleText": "直播"
+					"navigationBarTitleText": "直播",
+					"enablePullDownRefresh":true
 				}
 			},
 			{
@@ -281,7 +282,32 @@
 			{
 				"path": "zblive/show",
 				"style": {
-					"navigationBarTitleText": "直播详情"
+					"navigationBarTitleText": "直播详情",
+					"enablePullDownRefresh":true,
+					"app-plus":{
+						"subNVues":[{
+							"id":"zbliveshow",
+							"path":"zblive/subnvue/show",
+							
+							"style":{
+								"position":"absolute",
+								
+								"height":"360px",
+								"width":"100%",
+								"bottom":"0px",
+								"left":"0px",
+								"right":"0px",
+								"zindex":99,
+								"background": "transparent"
+								
+							}
+						}]
+					}
+				}
+			},{
+				"path":"zblive_hoster_apply/index",
+				"style":{
+					"navigationBarTitleText":"申请成为主播"
 				}
 			}
 

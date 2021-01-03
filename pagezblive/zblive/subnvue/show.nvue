@@ -1,118 +1,201 @@
 <template>
-	<div>
-		
+	<div >
+		<div class="ftBox-mask"></div>
 		<div class="ftBox">
 			
-			<scroller  scroll-y="true" class="msgList">
+			<scroller   class="msgList">
 				<div v-for="(item,index) in msgList" :key="index" class="msgList-item">
-					<div class="msgList-nick"><text class="f12 cl1">{{item.nickname}}</text></div>
-					<div class="msgList-desc"><text class="f12 cl2">{{item.content}}</text></div>
+					<div class="msgList-nick"><text class="f12 cl-white">{{item.nickname}}</text></div>
+					<div class="msgList-desc"><text class="f12 cl-white">{{item.content}}</text></div>
 				</div>
-				 
+				<div ref="scrollBottom"></div> 
 			</scroller>
 			
 			<div class="flex flex-ai-center">
-				<div @click="modalGoodShow=true" ><text class="iconfont ftBox-goods">&#xe7f9;</text></div>
 				
-				<template v-if="parseInt(data.zbstatus)==1">
+				<view @click="showGift" class="mgr-5 mgl-5 pointer"><text class="iconfont f22 cl-white">&#xe6d3;</text></view>
+				<template v-if="zblive.zbstatus==1">
 					
 				<div class="flex-1 pd-5">
-					<input v-model="cmContent" value="a" placeholder="发布你想了解的信息" class="ftBox-text" type="text"></input>
+					<input v-model="cmContent" value="a" placeholder="交流一下" class="ftBox-text" type="text"></input>
 				</div>
-				<div @click="sendMsg" class="btn-send"><text class="iconfont f22 cl-fff">&#xe940;</text></div>
+				<div @click="sendMsg" class="btn-send">
+					<text class="iconfont f22 cl-white">&#xe940;</text>
+					</div>
 				</template>
 			 
 					<div v-else class="flex-1 flex pd-5">
-						<div  class="ftBox-text flex-center" ><text class="cl3">直播结束，不能发布消息了</text></div>
+						<div  class="ftBox-text flex-center" >
+							<text class="cl-white">直播结束，不能发布消息了</text>
+							</div>
 					</div>
 			 
 			</div>
 			
 			
 		</div>
-		<div id="modal-group-goods" v-if="modalGoodShow" >
-			<div @click="modalGoodShow=false"  class="modal-mask"></div>
-			<div class="modal-goods">
-				<div class="flex pd-10">
-					<div class="flex-1"><text class="cl1 f16">推荐商品</text></div>
-					<div  @click="modalGoodShow=false"  ><text class="iconfont">&#xe7e3;</text></div>
-				</div>
-				<scroll-view scroll-y="true">
-				<div v-for="(item,index) in proList" :key="index" class="flex mgb-10">
-					<image class="wh-60 mgr-10" :src="item.imgurl" ></image>
-					<div class="flex-1">
-						<text class="cl1 f14 mgb-5">{{item.title}}</text>
-						<div class="flex">
-							<text>卷后价</text>
-							<text class="cl-money mgr-5">￥{{item.price}}</text>
-						
-							<div class="flex-1"></div>
-							<div @click="goQuan(item)" class="btn-small"><text class="cl-white">领券立省</text></div>
-						</div>
-					</div>
-				</div>
-				</scroll-view> 
-				
-			</div>
+		<div class="flex">
+				<el-gift :touserid="zblive.userid" v-if="giftShow" style="width:100%;background-color: #0088CC;" v-on:call-parent="sendGifts"></el-gift>	
 		</div>
-		
+
+		<gift-animate v-on:call-parent="agiftShow=false" v-if="agiftShow" :gift="agift"></gift-animate>
 		 
 	</div>
 	
 </template>
 <script>
 	var room_id;
+	var dom;
 	import $app from "../../../common/common.js";
+	import elGift from "../../../components/gift.nvue";
+	import giftAnimate from "../../../components/gift-animate-sub.nvue";
 	var timer=0;
+	var gid="zblive";
+ 
+	var uid = Date.parse(new Date());
+	var touid = ""
+	var ws;
+	var inPage = false;
+	var windowHeight=0;
+	var lastMsg;
+	var audioRecord;
+	var inAjax=false;
+	var agift_timer=0;
 	export default{
+		components: {
+			elGift,
+			giftAnimate
+		},
 		data:function(){
 			return {
 				pageLoad:false,
-				data:{},
-				proList:[],
+				zblive:{},
+				 
 				msgList:[],
 				cmContent:"",
-				modalGoodShow:false,
-				product:{},
-				productShow:false,
-				m3u8url:"",
-				mp4url:"",
-				modalGoodsClass:""
+				ssuser:{},
+				giftShow: false,
+				agift: {},
+				agiftShow: false,
+				scrollTop:10000
 				
 			}
 		},
 		created:function(){
 			console.log("oncreated..")
-			var domModule = weex.requireModule("dom");  
-			    domModule.addRule('fontFace', {  
-			           'fontFamily': 'iconfont',  
-			           'src': "url(\'https://at.alicdn.com/t/font_811242_m51pldzccmp.ttf\')"  
-			    }) 
+			var win = uni.getSystemInfoSync();
+			console.log(win.windowWidth)
+		},
+		onLoad:function(ops){
+			room_id=ops.id;
+			gid="zblive"+ops.id;
+			dom = weex.requireModule("dom");
+			dom.addRule('fontFace', {  
+				   'fontFamily': 'iconfont',  
+				   'src': "url(\'https://at.alicdn.com/t/font_811242_m51pldzccmp.ttf\')"  
+			}) 
+			console.log("直播 subnvue")	
 			var that=this;
 			that.app=$app;
-			const subNVue = uni.getSubNVueById('zbliveshow');
-			
-			subNVue.onMessage(function(res){
-				switch(res.data.action){
-					case "load":
-						room_id=res.data.room_id;
-						that.getPage();
-						that.getMsgList();
-						if(timer>0){
-							clearInterval(timer);
-						}
-						timer=setInterval(function(){
-							that.getMsgList();
-						},100000);
-						break;
-				}
-			    
-			})	
+			that.getPage();
+			that.getMsgList();
+			uni.$on("sendGift",function(e){
+				e.nickname=that.ssuser.nickname;
+				var msg = JSON.stringify({
+					 
+					type: "gift",
+					gid: gid,
+					gift:e,
+					content: "送礼物",
+					user_head:that.ssuser.user_head,
+					nickname:that.ssuser.nickname,
+					userid:that.ssuser.userid
+				});
+				ws.send({
+					data: msg
+				});
+				  
+			})
 		},
-		onLoad:function(){
-			console.log("onload..")
+		onUnload:function(){
+			uni.$off("sendGift")
 		},
 		methods:{
+			wsInit: function() {
+				var that = this;
+			
+				if (this.wsConn) {
+					ws.close();
+				}
+				ws = uni.connectSocket({
+					url: that.app.wsHost,
+					complete: function(res) {
+			
+					}
+				});
+			
+				ws.onOpen(function(res) {
+			
+					var msg = JSON.stringify({
+						type: "login",
+						k: uid,
+						gid: gid,
+						
+						content: "login"
+					});
+					ws.send({
+						data: msg
+					});
+				});
+				ws.onError(function(res) {
+					console.log(res)			 
+					if (Object.keys(res).length>1) {
+						ws.wsInit();
+					}
+				
+				});
+				ws.onMessage(function(e) {
+					var res = JSON.parse(e.data);
+					console.log(res);
+					switch (res.type) {
+						case "login":
+							break;
+						case "gift":
+							that.agift=res.gift;
+							that.agiftShow=true;
+							
+							clearTimeout(agift_timer);
+							agift_timer=setTimeout(function(){
+								that.agiftShow=false;
+							},2000)
+							break;
+						case "say":
+							var json = {
+								gid: gid,
+								
+								uid: res.wsclient_from,
+								touid: res.wsclient_to,
+								content: res.content,
+								time: res.time,
+								user_head:res.user_head,
+								nickname:res.nickname,
+								userid:res.userid,
+								isme: uid == res.wsclient_from ? true : false
+							}
+								
+							that.msgList.push(json);
+							that.goBottom();
+							break;
+					}
+				});
+			},
+			goBottom:function(){
+				var that=this;
+				 
+				setTimeout(function(){
+					dom.scrollToElement(that.$refs.scrollBottom,{})
+				},300)
+			}, 
 			getPage:function(){
 				
 				var that=this;
@@ -120,12 +203,12 @@
 					url:that.app.apiHost+"/module.php?m=zblive&a=show&ajax=1&id="+room_id,
 					dataType:"json",
 					success:function(res){
-						that.data=res.data.zblive;
+						that.zblive=res.data.zblive;
+						that.ssuser=res.data.ssuser; 
 						 
-						that.getProList();
 						that.pageLoad=true;
-						that.m3u8url=res.data.m3u8url;
-						that.mp4url=res.data.mp4url;
+						 
+						that.wsInit();
 					}
 				})
 			},
@@ -136,6 +219,7 @@
 					dataType:"json",
 					success:function(res){
 						that.msgList=res.data.list;
+						that.goBottom();
 					}
 				})
 			},
@@ -147,7 +231,7 @@
 					})
 					return false;
 				}
-				
+				var content=this.cmContent;
 				that.app.post({
 					url:that.app.apiHost+"/module.php?m=zblive_msg&a=save&ajax=1",
 					data:{
@@ -156,221 +240,197 @@
 					},
 					success:function(res){
 						that.cmContent="";
-						that.getMsgList(); 
-					}
-				})
-			},
-			getProList:function(){
-				var that=this;
-				that.app.get({
-					url:that.app.apiHost+"/module.php?m=taoke_searchcache&a=listbyids&ajax=1&ids="+that.data.proids,
-					dataType:"json",
-					success:function(res){					
-						that.proList=res.data.list;
-					}
-				})
-			},
-			goQuan:function(item){
-				var that=this;
-			 
-				that.app.get({
-					url:that.app.apiHost+"/module.php?m=taoke_search&a=getpwd&ajax=1&id="+item.id,
-					dataType:"json",
-					success:function(res){
-						if(res.error){
-							uni.showToast({
-								title:res.message
-							})
-							return false;
-						}
-						uni.setClipboardData({
-							data: res.data,
-							success: function() {
-								that.goTaobao();
-							}
-						});
-					}
-				})
-			}, 
-			goTaobao: function() {
-				uni.showToast({
-					title:"正在前往淘宝"
-				})
-				// #ifdef APP-PLUS
-				if (plus.os.name == "Android") {
-					plus.runtime.launchApplication({
-							pname: "com.taobao.taobao",
-							extra: {
-								url: "https://m.taobao.com/#index"
-							}
-						},
-						function(e) {
-							uni.showToast({
-								title:"打开淘宝失败，请先安装淘宝"
-							})
+						var msg = JSON.stringify({
 							 
-						}
-					);
-				} else if (plus.os.name == "iOS") {
-					plus.runtime.launchApplication({
-						action: "taobao://"
-					}, function(e) {
-						uni.showToast({
-							title:"打开淘宝失败，请先安装淘宝"
-						})
-					});
-				}
-				// #endif
-			}
+							type: "say",
+							gid: gid,
+							content: content,
+							user_head:that.ssuser.user_head,
+							nickname:that.ssuser.nickname,
+							userid:that.ssuser.userid
+						});
+						
+						lastMsg = msg;
+						ws.send({
+							data: msg
+						});
+						 
+						 
+					}
+				})
+			},
+			showGift: function() {
+				this.giftShow = false;
+				var that = this;
+				setTimeout(function() {
+					that.giftShow = true;
+				}, 10)
+			
+			},
+			 
+			 
 		}
 	}
 </script>
 <style>
-	@import "../../../common/dt-ui-weex.css";
+	@import "../../../common/dt-ui-nvue.css";
 	.wmax{
-		width: 100%;
-		height: 100%;
-	}
-	.btn-small{
-		background-color: #007BFF;
-		color: #fff;
-		border-radius: 13rpx;
-		padding: 13rpx 26rpx;
-	}
-	.ftBox {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 999;
-	}
+			width: 100%;
+			height: 100%;
+		}
+		.btn-small{
+			background-color: #007BFF;
+			color: #fff;
+			border-radius: 13rpx;
+			padding: 13rpx 26rpx;
+		}
+		.ftBox-mask {
+			position: fixed;
+			bottom: 0;
+			top:0;
+			left: 0;
+			right: 0;
+			z-index: 999;
+			background-color: #000000;
+			opacity: 0.01;
+		}
+		.ftBox {
+			position: fixed;
+			bottom: 0;
+			top:0;
+			left: 0;
+			right: 0;
+			z-index: 999;
+			flex-direction: column; 
+		}
+		
+		.ftBox-goods {
+			font-size:  80rpx;
+			color: #f00;	
+		}
+		
+		.ftBox-text {
+		 
+			height: 80rpx;
+			line-height:  80rpx;
+			border-width: 0;
+			border-radius: 12rpx;
+			background-color: #333;
+			opacity: 0.6;
+			flex:1;
+			color: #fff;
+			padding-left: 14rpx;
+		}
+		
+		.btn-send {
+			height: 76rpx;
+			line-height: 76rpx;
+			padding: 0rpx 16rpx;
+			justify-content: center;
+			margin-right: 10rpx;
+			color: #fff;
+		}
+		
+		.msgList {
+			position: relative;
 	
-	.ftBox-goods {
-		font-size:  80rpx;
-		color: #f00;	
-	}
-	
-	.ftBox-text {
-	 
-		height: 80rpx;
-		line-height:  80rpx;
-		border-width: 0;
-		border-radius: 12rpx;
-		background-color: #333;
-		opacity: 0.6;
-		flex:1;
-		color: #fff;
-		padding-left: 14rpx;
-	}
-	
-	.btn-send {
-		height: 38px;
-		line-height: 38px;
-		padding: 0px 8px;
-		justify-content: center;
-		margin-right: 10rpx;
-		color: #fff;
-	}
-	
-	.msgList {
-		position: fixed;
-		bottom: 120rpx;
-		top: 400rpx;
-		left: 0;
-		right: 0;
-		padding: 18rpx;
-	}
-	
-	.msgList-item {
-		flex-direction: row;
-		margin-bottom: 10rpx;
-	}
-	
-	.msgList-nick {
-		margin-right: 18rpx;
-		color: #f60;
-		font-size: 32rpx;
-	}
-	
-	.msgList-desc {
-		color: #ff0;
-		font-size: 32rpx;
-		flex: 1;
-	}
-	
-	.modal-goods {
-		position: fixed;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-		z-index: 999;
-		background-color: #fff;
-	}
-	
-	.modal-share {
-		position: fixed;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-		z-index: 999;
-		background-color: #fff;
-	}
-	
-	.mline {
-		margin-bottom: 10px;
-		border-style: solid;
-		border-color: #000000;
-		border-bottom-width: 1px;
-	}
-	
-	.btn-quan {
-		font-size: 12px;
-		color: #f30;
-		padding: 3px;
-		border-style: dotted;
-		border-color: #f30;
-		border-width: 1px;
-	}
-	
-	.btn-ma {
-		width: 160px;
-		border-style: dotted;
-		border-color: #f30;
-		border-width: 1px;
-		line-height: 30px;
-		height: 30px;
-		font-size: 14px;
-		text-align: center;
-		margin-bottom: 10px;
-		background-color: #fcf6f6;
-		border-radius: 5px;
-		color: #f30;
-	}
-	
-	.btn-copy {
-		background-color: #f30; 
-		margin-bottom: 10px;
-		padding: 10px 20px;
-	}
-	
-	.modal-share-close {
-		background-color: #333;
-		position: absolute;
-		right: 0rpx;
-		width: 70rpx;
-		height: 70rpx;
-		color: #fff;
-		border-radius: 50%;
-		opacity: 0.9;
-		top: 0rpx;
-		align-items: center;
-		justify-content: center;
-		z-index:9991;
-	}
- .iconfont {  
-     font-family: iconfont;
-  
-	   font-size: 34px; 
- }  
+			flex:1;
+		}
+		
+		.msgList-item {
+			flex-direction: row;
+			padding: 20rpx 40rpx;
+			background-color: #000;
+			opacity: 0.5;
+			margin: 10px;
+			border-radius: 10px;
+		}
+		
+		.msgList-nick {
+			margin-right: 18rpx;
+			color: #f60;
+			font-size: 32rpx;
+		}
+		
+		.msgList-desc {
+			color: #ff0;
+			font-size: 32rpx;
+			flex: 1;
+		}
+		
+		.modal-goods {
+			position: fixed;
+			bottom: 0rpx;
+			left: 0rpx;
+			right: 0rpx;
+			z-index: 999;
+			background-color: #fff;
+		}
+		
+		.modal-share {
+			position: fixed;
+			bottom: 0rpx;
+			left: 0rpx;
+			right: 0rpx;
+			z-index: 999;
+			background-color: #fff;
+		}
+		
+		.mline {
+			margin-bottom: 20rpx;
+			border-style: solid;
+			border-color: #000000;
+			border-bottom-width: 1px;
+		}
+		
+		.btn-quan {
+			font-size: 24rpx;
+			color: #f30;
+			padding: 6rpx;
+			border-style: dotted;
+			border-color: #f30;
+			border-width: 1px;
+		}
+		
+		.btn-ma {
+			width: 320rpx;
+			border-style: dotted;
+			border-color: #f30;
+			border-width: 1px;
+			line-height: 60rpx;
+			height: 60rpx;
+			font-size: 28rpx;
+			text-align: center;
+			margin-bottom: 20rpx;
+			background-color: #fcf6f6;
+			border-radius: 10rpx;
+			color: #f30;
+		}
+		
+		.btn-copy {
+			background-color: #f30; 
+			margin-bottom: 20rpx;
+			padding: 20rpx 40rpx;
+		}
+		
+		.modal-share-close {
+			background-color: #333;
+			position: absolute;
+			right: 0rpx;
+			width: 70rpx;
+			height: 70rpx;
+			color: #fff;
+			border-radius: 50%;
+			opacity: 0.9;
+			top: 0rpx;
+			align-items: center;
+			justify-content: center;
+			z-index:9991;
+		}
+	 .iconfont {  
+	     font-family: iconfont;
+	  
+		   font-size: 68rpx; 
+	 }  
 
 </style>

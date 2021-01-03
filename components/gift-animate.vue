@@ -16,6 +16,7 @@
 			"gift":{}
 		},
 		created:function(){
+			console.log(this.gift)
 			return {
 				a:1
 			}

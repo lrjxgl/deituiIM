@@ -18,9 +18,9 @@
 		 
 		<view v-if="page=='blog'" style="display: none;" :class="'flex-col'" class="sglist">
 			<view class="emptyData" v-if="rscount==0" >暂无帖子</view> 
-			<view v-for="(item,index) in list" :key="index" @click="goBlog(item.id)" class="sglist-item">
-				<div class="flex mgb-5">
-					<img :src="item.user.user_head+'.100x100.jpg'" class="wh-40 bd-radius-50" />
+			<view v-for="(item,index) in list" :key="index" class="sglist-item">
+				<div @click="goUser(item.userid)" class="flex mgb-5">
+					<img  :src="item.user.user_head+'.100x100.jpg'" class="wh-40 bd-radius-50" />
 					<div class="flex-1 mgl-5">
 						<div class="f14 fw-600 mgb-5">{{item.user.nickname}}</div>
 						<div class="flex">
@@ -30,14 +30,16 @@
 					</div>
 					 
 				</div>
-				<view class="sglist-title block" v-html="item.content"></view>
-				<list-image :imgslist="item.imgslist"></list-image>
-				 
-				<view class="sglist-ft">
-					<view class="sglist-ft-love">{{item.love_num}}</view>
-					<view class="sglist-ft-cm">{{item.comment_num}}</view>
-					<view class="sglist-ft-view">{{item.view_num}}</view>
-				</view> 
+				<view  @click="goBlog(item.id)">
+					<view class="sglist-title block" v-html="item.content"></view>
+					<list-image :imgslist="item.imgslist"></list-image>
+					 
+					<view class="sglist-ft">
+						<view class="sglist-ft-love">{{item.love_num}}</view>
+						<view class="sglist-ft-cm">{{item.comment_num}}</view>
+						<view class="sglist-ft-view">{{item.view_num}}</view>
+					</view> 
+				</view>
 			</view>
 			<view @click="getList" v-if="per_page>0" class="loadMore">点我加载更多...</view>
 		</view>
@@ -102,6 +104,11 @@ export default({
 		goBlog:function(id){
 			uni.navigateTo({
 				url:"../sblog_blog/show?id="+id
+			})
+		},
+		goUser:function(userid){
+			uni.navigateTo({
+				url:"../sblog_home/index?userid="+userid
 			})
 		},
 		goTopic:function(title){

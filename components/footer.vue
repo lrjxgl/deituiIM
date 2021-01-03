@@ -4,7 +4,7 @@
 		<view class="footer">
 			<view @click="goIndex" :class="{'footer-active':tabActive=='index'}" class="footer-item  icon-like">缘分</view>
 			<view @click="goNews" :class="{'footer-active':tabActive=='sblog'}" class="footer-item icon-attention_light">动态</view>
-			<!--<view @click="goZblive"  :class="{'footer-active':tabActive=='zblive'}" class="footer-item icon-video_light">直播</view>-->
+			<view @click="goZblive"  :class="{'footer-active':tabActive=='zblive'}" class="footer-item icon-video_light">直播</view>
 			<view @click="goMsg" :class="{'footer-active':tabActive=='msg'}"  class="footer-item icon-message  icon-notice">消息</view>
 			<view @click="goUser" :class="{'footer-active':tabActive=='user'}"  class="footer-item icon-my_light">我</view>
 		</view>
