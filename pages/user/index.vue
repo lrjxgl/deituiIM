@@ -112,8 +112,8 @@
 			getPage: function() {
 				var that = this;
 				that.app.get({
-					url: that.app.apiHost + "/module.php?m=sblog_user&ajax=1&authcode=" + that.app.getAuthCode(),
-					unLogin: true,
+					url: that.app.apiHost + "/module.php?m=sblog_user&ajax=1",
+					
 					success: function(res) {
 						if (res.error == 1000) {
 

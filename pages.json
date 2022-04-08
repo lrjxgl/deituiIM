@@ -169,12 +169,7 @@
 				"navigationBarTitleText": "支付"
 			}
 		},
-		{
-			"path": "pages/recharge/order",
-			"style": {
-				"navigationBarTitleText": "订单支付"
-			}
-		},
+		
 		{
 			"path": "pages/pay_log/my",
 			"style": {
@@ -320,9 +315,44 @@
 				"style":{
 					"navigationBarTitleText":"收到的礼物"
 				}
+			},{
+				"path":"im_group/index",
+				"style":{
+					"navigationBarTitleText":"聊天广场"
+				}
+			},{
+				"path":"im_group/chat",
+				"style":{
+					"navigationBarTitleText":"聊天室"
+				}
 			}
 		]
-	}],
+	},
+	
+	{
+	    "root" : "gold",
+	    "pages" : [
+	        {
+	            "path" : "gold/index",
+	            "style" : {
+	                "navigationBarTitleText" : "金币商城"
+	            }
+	        },
+	        {
+	            "path" : "gold_product/show",
+	            "style" : {
+	                "navigationBarTitleText" : "商品详情"
+	            }
+	        },
+	        {
+	            "path" : "gold_order/my",
+	            "style" : {
+	                "navigationBarTitleText" : "我的订单"
+	            }
+	        }
+	    ]
+	}
+	],
 	"preloadRule": {
 		"pages/index/index": {
 			"network": "all",

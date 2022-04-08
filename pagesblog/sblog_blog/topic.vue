@@ -33,7 +33,7 @@
 			}
 		},
 		onLoad:function(ops){
-			title=ops.title;
+			title=decodeURI(ops.title) ;
 			uni.setNavigationBarTitle({
 				title:title
 			})

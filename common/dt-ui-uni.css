@@ -1437,7 +1437,7 @@ navigator{
 	font-weight: bold;
 	display: flex;
 	flex-direction: row;
-	line-height: 120rpx;
+	line-height: 80rpx;
 }
 .modal-title{
 	flex: 1;
@@ -1445,9 +1445,9 @@ navigator{
 }
 .modal-close{
 	font-family: iconfont;
-	width: 120rpx;
-	height:120rpx;
-	line-height: 120rpx;
+	width: 80rpx;
+	height:80rpx;
+	line-height: 80rpx;
 	color: #646464;
 	text-align: center;
 	cursor: pointer;

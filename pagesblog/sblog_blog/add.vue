@@ -1,9 +1,14 @@
 <template>
 	<view>
 		<view v-if="pageLoad">
-			<view class="main-body">
+			<view v-if="!unLogin">
 				<form  @submit="formSubmit"  >
-					 
+					<div class="none">
+						<input class="none" type="text" name="topicid" v-model="topicid" />
+					</div>
+					<div class="pd-10 cl-primary" v-if="Object.keys(topic).length>0">
+						话题：{{topic.title}}
+					</div> 
 					<view class="textarea-flex">
 						<textarea maxlength="1024" name="content" placeholder="请输入内容" placeholder-class="cl2" style="width:100%;height:150px;" ></textarea>
 						
@@ -31,7 +36,7 @@
 	 
 	import upimgBox from "../../components/upimgbox.vue";
 	import upVideo from "../../components/up-video.vue";
-	var app = require("../../common/common.js");
+	 
 	var id;
 	export default {
 		
@@ -42,22 +47,33 @@
 		data:function(){
 			return {
 				pageLoad:false, 
+				unLogin:true,
 				pageHide:false,
-				pageData:{},
+				topic:{},
 				tab:"",
 				mp4url:"",
-				imgsData:""
+				imgsData:"",
+				topicid:0
 			}
 			
 		},
-		onLoad: function (option) {
-			id = option.id;
+		onLoad: function (ops) {
+			id = ops.id;
+			if(ops.topicid!=undefined){
+				this.topicid=ops.topicid;
+			}
+			
 			this.getPage();
 		},
 		onReady: function () {
 			uni.setNavigationBarTitle({
 				title: "发布帖子",
 			})
+		},
+		onShow:function(){
+			if(this.pageLoad){
+				this.getPage();
+			}
 		},
 		methods: {
 			callImgsData:function(e){
@@ -69,14 +85,26 @@
 			getPage: function () {
 				var that = this;
 				this.app.get({
-					url: that.app.apiHost + "/module.php?m=sblog_blog&ajax=1&a=add&authcode="+app.getAuthCode(),
+					url: that.app.apiHost + "/module.php?m=sblog_blog&ajax=1&a=add",
+					 
+					data:{
+						topicid:this.topicid
+					},
 					success: function (res) {
 						if(res.error==1000){
+							that.pageLoad = true;
 							that.app.goLogin();
 							return false;
+						}else{
+							that.pageLoad = true;
+							 
+							if(res.data.topic){
+								that.topic = res.data.topic;
+							}
+							
+							that.unLogin=false;
 						}
-						that.pageLoad = true;
-						that.pageData = res.data;
+						
 
 					}
 				})
@@ -85,7 +113,7 @@
 			formSubmit:function(e){
 				var that=this;
 				that.app.post({
-					url:that.app.apiHost+"/module.php?m=sblog_blog&a=save&ajax=1&authcode="+app.getAuthCode(),
+					url:that.app.apiHost+"/module.php?m=sblog_blog&a=save&ajax=1",
 					data:e.detail.value,
 					success:function(res){
 						uni.showToast({

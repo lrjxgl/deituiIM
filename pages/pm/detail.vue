@@ -44,7 +44,7 @@
 </template>
 
 <script>
-	var timer=0;
+	 
 	var inAjax=false;
 	var windowHeight=0;
 	export default{
@@ -60,7 +60,8 @@
 				sch: 0,
 				oldsch: 0,
 				scrollTop: 10000,
-				time:0
+				time:0,
+				timer:0
 			}
 		},
 		onLoad:function(ops){
@@ -71,9 +72,15 @@
 			this.getPage();
 			
 		},
+		onUnload:function(){
+			clearInterval(this.timer);
+			this.timer=0;
+			console.log("close timer");
+		},
 		onHide:function(){
-			clearInterval(timer);
-			timer=0;
+			clearInterval(this.timer);
+			this.timer=0;
+			console.log("close timer");
 		},
 		onShow:function(){
 			this.setTimer();
@@ -102,10 +109,10 @@
 			},
 			setTimer:function(){
 				var that=this;
-				if(timer>0){
-					clearInterval(timer);
+				if(this.timer>0){
+					clearInterval(this.timer);
 				}
-				timer=setInterval(function(){
+				this.timer=setInterval(function(){
 					that.getNew()
 				},10000)
 			},

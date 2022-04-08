@@ -1,6 +1,6 @@
 <template>
 	<view class="main-body" id="app">
-		<view v-if="!pageData.list || Object.keys(pageData.list).length==0" class="emptyData">暂无数据</view> 
+		 
 		<view class="sglist">
 			 
 			<view v-for="(item,index) in pageData.list" :key="index"  class="sglist-item">

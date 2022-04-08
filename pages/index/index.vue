@@ -118,10 +118,10 @@
 					url:"../../pagesblog/sblog_home/index?userid="+userid
 				})
 			},
-			goChat:function(groupid){
-				groupid=1;
+			goChat:function(){
+				 
 				uni.navigateTo({
-					url:"../index/chat?groupid="+groupid
+					url:"../../im/im_group/index"
 				});
 			},
 			getPage:function(){

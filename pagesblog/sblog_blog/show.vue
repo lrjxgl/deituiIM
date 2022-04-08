@@ -1,13 +1,16 @@
 <template>
 	<view v-if="pageLoad">
-		<!--添加好友-->
-		<friend-apply :touserid="pageData.author.userid"></friend-apply>
+		 
 		<view class="main-body pd-5 mgb-5 bg-fff">
 			<d-userbox :user="pageData.author"></d-userbox>
-			 
+			<view class="d-title">{{pageData.data.title}}</view>
+			<view class="d-tools">
+				<view class="mgr-10 cl2">作者：{{pageData.author.nickname}}</view>
+				<view class="cl2">{{pageData.data.timeago}}</view>
+			</view>
 			<rich-text class="d-content" :nodes="pageData.data.content"></rich-text>
 			
-			<view class="d-content">
+			<view class="row-box">
 				<video class="video" v-if="pageData.data.mp4url!=''" :src="pageData.data.mp4url"></video>
 				<view v-else class="flex-center" >
 					
@@ -27,7 +30,7 @@
 		</view>
 		
 		<!--评论-->
-		 
+		
 		<cmform tablename="mod_sblog_blog" :objectid="pageData.data.id"></cmform>
 	</view>
 </template>
@@ -35,21 +38,18 @@
 <script>
 	import dUserbox from "../../components/d-userbox.vue";
 	import cmform from "../../components/cmform.vue";
-	import friendApply from "../../components/friend-apply.vue";
 	 
 	var id;
 	export default {
 		components: {
 			dUserbox,
-			cmform,
-			friendApply
+			cmform
 		},
 		data:function(){
 			return {
 				pageLoad:false, 
 				pageHide:false,
-				pageData:{},
-				isFriend:0
+				pageData:{}
 				 
 			}
 			
@@ -61,6 +61,9 @@
 			
 		},
 		onShareAppMessage:function(){
+			
+		},
+		onShareTimeline:function(){
 			
 		},
 		onPullDownRefresh:function(){
@@ -91,7 +94,7 @@
 					 
 					success: function (res) {
 						that.pageLoad = true;
-						res.data.data.content=that.app.html(res.data.data.content);
+						 
 						that.pageData = res.data;
 						 
 					}
@@ -99,19 +102,14 @@
 			},
 			favToggle:function(id){
 				var that=this;
-				uni.request({
-					url:that.app.apiHost+"?fromapp=wxapp&m=fav&a=toggle&ajax=1",
+				that.app.get({
+					url:that.app.apiHost+"?m=fav&a=toggle&ajax=1",
 					data:{
 						objectid:id,
-						authcode:that.app.getAuthCode(),
 						tablename:"mod_sblog_blog"  
 					},
 					success:function(res){
-						if(res.data.error==1000){
-							that.app.goLogin();
-							return false;
-						}
-						if(res.data.data=='delete'){
+						if(res.data=='delete'){
 							that.pageData.isfav=false;
 						}else{
 							that.pageData.isfav=true;
@@ -122,21 +120,15 @@
 			},
 			loveToggle:function(id){
 				var that=this;
-				uni.request({
+				that.app.get({
 					url:that.app.apiHost+"?m=love&a=toggle&ajax=1",
 					data:{
-						
-						fromapp:that.app.fromapp(),
 						objectid:id,
-						authcode:that.app.getAuthCode(),
 						tablename:"mod_sblog_blog"
 					},
 					success:function(res){
-						if(res.data.error==1000){
-							that.app.goLogin();
-							return false;
-						}
-						if(res.data.data=='delete'){
+		 
+						if(res.data=='delete'){
 							that.pageData.islove=false;
 						}else{
 							that.pageData.islove=true;
@@ -154,7 +146,10 @@
 		width:100%;
 		margin-bottom: 10px;
 	}
-	
+	.wmax{
+		width: 100%;
+		height: auto;
+	}
 </style>
 
  

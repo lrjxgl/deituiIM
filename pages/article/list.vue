@@ -6,15 +6,15 @@
 		</view>
 		<view class="header-row"></view>
 		<view class="main-body" v-if="pageLoad">
-			<scroll-view class="bg-fff" scroll-x="true">
+			<scroll-view v-if="catList.length>0" class="bg-fff" scroll-x="true">
 				<view class="tabs-border">
 					<view @click="setCatid(scatid)" :class="catid==scatid?'tabs-border-active':''" class="tabs-border-item">全部</view>
-					<view @click="setCatid(item.catid)" v-for="(item,index) in pageData.catlist" :key="index" :class="catid==item.catid?'tabs-border-active':''"  class="tabs-border-item" >{{item.cname}}</view>
+					<view @click="setCatid(item.catid)" v-for="(item,index) in catList" :key="index" :class="catid==item.catid?'tabs-border-active':''"  class="tabs-border-item" >{{item.cname}}</view>
 							
 				</view>	
 			</scroll-view>
 			<view class="sglist">
-				<view class="sglist-item" v-for="(item,key) in pageData.list" :key="key" @click="goArticle(item.id)">
+				<view class="sglist-item" v-for="(item,key) in list" :key="key" @click="goArticle(item.id)">
 					<view v-if="item.imgurl" class="sglist-imgbox">
 						<image class="sglist-img" mode="widthFix" :src="item.imgurl+'.middle.jpg'"></image>
 					</view>
@@ -36,13 +36,13 @@
 				 
 			</view>
 		</view>
-		 
+		<go-top></go-top> 
 	</view>
 </template>
 
 <script>
 	 
-	var isFirst=false;
+ 
 	export default{
 		 
 		data:function(){
@@ -50,9 +50,13 @@
 				pageData:{},
 				pageLoad:false,
 				type:"",
+				isFirst:true,
 				per_page:0,
 				catid:0,
 				scatid:0,
+				catList:[],
+				list:[],
+				cat:{}
 			}
 		},
 		onLoad:function(ops){
@@ -76,13 +80,14 @@
 			getPage:function(){
 				var that=this;
 				that.app.get({
-					url:that.app.apiHost+"/index.php?m=article&a=list&ajax=1&catid="+this.catid,
+					url:that.app.apiHost+"/article/list?catid="+this.catid,
 					dataType:"json",
 					success:function(res){
-						that.pageData=res.data;
+						that.list=res.data.list;
 						that.pageLoad=true;
 						that.per_page=res.data.per_page;
-						isFirst=false;
+						that.isFirst=false;
+						that.cat=res.data.cat;
 						uni.setNavigationBarTitle({
 							title:res.data.cat.cname
 						})
@@ -91,12 +96,12 @@
 			},
 			getList:function(){
 				var that=this;
-				if(that.per_page==0 && !isFirst){
+				if(that.per_page==0 && !that.isFirst){
 					skyToast("已经到底了");
 					return false;
 				}
 				that.app.get({
-					url:that.app.apiHost+"/index.php?m=article&a=list&ajax=1&catid="+this.catid,
+					url:that.app.apiHost+"/article/list?catid="+this.catid,
 					data:{
 						type:that.type,
 						per_page:that.per_page,
@@ -105,16 +110,14 @@
 					dataType:"json",
 					success:function(res){
 						that.per_page=res.data.per_page;
-						if(isFirst){
-							that.pageData.list=res.data.list;
+						if(that.isFirst){
+							that.list=res.data.list;
+							that.isFirst=false;
 						}else{
-							var list=that.pageData.list;
-							for(var i=0;i<res.data.list.length;i++){
-								list.push(res.data.list[i]);
-							}
-							that.pageData.list=list;
+							for(var i in res.data.list){
+								that.list.push(res.data.list[i]);
+							}							
 						}
-						isFirst=false;
 					}
 				})
 			}

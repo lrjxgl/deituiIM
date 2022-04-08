@@ -64,18 +64,14 @@
 			},
 			submit:function(e){
 				var that=this;
-				uni.request({
-					url:that.app.apiHost+"?m=user&a=save&ajax=1&fromapp="+that.app.fromapp()+"&authcode="+that.app.getAuthCode(),
-					method:"POST",
-					header:{
-						"content-type":"application/x-www-form-urlencoded"
-					},
+				that.app.post({
+					url:that.app.apiHost+"/index.php?m=user&a=save",
 					data:e.detail.value,
 					success:function(res){
 						uni.showToast({
-							"title":res.data.message
+							"title":res.message
 						})
-						if(!res.data.error){
+						if(!res.error){
 							setTimeout(function(){
 								uni.navigateBack()
 							},600)

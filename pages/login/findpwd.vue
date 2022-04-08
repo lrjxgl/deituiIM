@@ -61,17 +61,16 @@
 			getYzm:function(){
 					if(!yzmEnable) return false;
 					var that=this;
-					uni.request({
-						url:that.app.apiHost+"?m=login&a=SendSms&ajax=1",
+					that.app.get({
+						url:that.app.apiHost+"/login/sendsms?ajax=1",
 						data:{
-							telephone:this.telephone,
-							fromapp:that.app.fromapp()
+							telephone:this.telephone
 						},
 						success:function(res){
 							uni.showToast({
-								title:res.data.message,
+								title:res.message,
 							})
-							if(!res.data.error){
+							if(!res.error){
 								that.downTimer();
 							}
 							
@@ -81,19 +80,15 @@
 			
 			formSubmit:function(e){
 				var that=this;
-				uni.request({
-					url:that.app.apiHost+"?m=login&a=findpwdSave&ajax=1",
-					method:"POST",
-					header:{
-						"content-type":"application/x-www-form-urlencoded"
-					},
+				that.app.post({
+					url:that.app.apiHost+"/login/findpwdsave?ajax=1",
 					data:e.detail.value,
 					success:function(res){
-						var data=res.data;
+						 
 						uni.showToast({
-							"title":res.data.message
+							"title":res.message
 						})
-						if(!res.data.error){
+						if(!res.error){
 							
 							setTimeout(function(){
 								uni.navigateBack();

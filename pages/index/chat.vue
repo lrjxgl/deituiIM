@@ -501,7 +501,7 @@
 					success: function(e) {
 						inPage = false;
 						uni.uploadFile({
-							url: that.app.apiHost + "/index.php?m=upload&a=upload&ajax=1&authcode=" + that.app.getAuthCode(), //仅为示例，非真实的接口地址
+							url: that.app.apiHost + "/index.php?m=upload&a=upload&ajax=1&loginToken=" + that.app.getToken(), //仅为示例，非真实的接口地址
 							filePath: e.tempFilePaths[0],
 							name: 'upimg',
 							dataType: "json",
@@ -529,7 +529,7 @@
 					success: function(e) {
 						inPage = false;
 						uni.uploadFile({
-							url: that.app.apiHost + "/index.php?m=upload&a=img&ajax=1&authcode=" + that.app.getAuthCode(), //仅为示例，非真实的接口地址
+							url: that.app.apiHost + "/index.php?m=upload&a=img&ajax=1&loginToken=" + that.app.getToken(), //仅为示例，非真实的接口地址
 							filePath: e.tempFilePaths[0],
 							name: 'upimg',
 							dataType: "json",

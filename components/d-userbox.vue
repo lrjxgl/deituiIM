@@ -50,21 +50,17 @@
 			},
 			followToggle:function(userid){
 				var that=this;
-				uni.request({
+				that.app.get({
 					url:this.app.apiHost+"/index.php?m=follow&a=toggle&ajax=1&t_userid="+userid,
-					data:{
-						authcode:this.app.getAuthCode(),
-						fromapp:this.app.fromapp()
-					},
 					success:function(res){
-						if(res.data.error){
+						if(res.error){
 							uni.showToast({
-								title:res.data.message
+								title:res.message
 							})
 							return false;
 						}
-						if(res.data.error==0){
-							if(res.data.status==0){
+						if(res.error==0){
+							if(res.status==0){
 								that.followStr="关注";
 							}else{
 								that.followStr="已关注";

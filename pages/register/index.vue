@@ -23,10 +23,7 @@
 				<input class="input-flex-text" name="password" type="text" password=true  placeholder="请填写密码">
 			</view>
 			
-			<div class="input-flex">
-				<div class="input-flex-label">邀请码</div>
-				<input class="input-flex-text" name="invitecode" placeholder="请输入邀请码" />
-			</div> 
+			 
 			
 			<button type="primary" form-type="submit" class="btn-row-submit btn-success">立即注册</button>
 		   
@@ -74,15 +71,14 @@
 			getYzm:function(){
 					if(!yzmEnable) return false;
 					var that=this;
-					uni.request({
-						url:that.app.apiHost+"?m=register&a=SendSms&ajax=1",
+					that.app.get({
+						url:that.app.apiHost+"/register/SendSms?ajax=1",
 						data:{
-							telephone:this.telephone,
-							fromapp:that.app.fromapp()
+							telephone:this.telephone							 
 						},
 						success:function(res){
 							uni.showToast({
-								title:res.data.message,
+								title:res.message,
 							})
 							if(!res.error){
 								that.downTimer();
@@ -95,21 +91,17 @@
 			formSubmit:function(e){
 				var that=this;
 				e.detail.value.password2=e.detail.value.password;
-				uni.request({
-					url:that.app.apiHost+"?m=register&a=regsave&ajax=1",
-					method:"POST",
-					header:{
-						"content-type":"application/x-www-form-urlencoded"
-					},
+				that.app.post({
+					url:that.app.apiHost+"/register/regsave?ajax=1",
 					data:e.detail.value,
-					success:function(res){
-						var data=res.data;
-						if(res.data.error){
+					success:function(res){						 
+						if(res.error){
 							uni.showToast({
-								"title":res.data.message
+								"title":res.message
 							})
 						}else{
-							that.app.setAuthCode(data.data.authcode);
+							uni.setStorageSync("token",res.data.token);
+							uni.setStorageSync("refresh_token",res.data.refresh_token);
 							that.app.goHome();
 						}
 						

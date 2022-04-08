@@ -95,7 +95,7 @@
 			getPage: function() {
 				var that = this;
 				that.app.get({
-					url: that.app.apiHost + "/module.php?m=sblog_user&ajax=1&authcode=" + that.app.getAuthCode(),
+					url: that.app.apiHost + "/module.php?m=sblog_user&ajax=1",
 
 					success: function(res) {
 						if (res.error == 1000) {
@@ -110,15 +110,11 @@
 						}
 					}
 				})
-			},
+			}, 
 			loginOut:function(){
 				var that=this; 
-				uni.request({
+				that.app.get({
 					url:that.app.apiHost+"?m=login&a=logout&ajax=1",
-					data:{
-						"authcode":that.app.getAuthCode(),
-						"fromapp":that.app.fromapp()
-					},
 					success:function(res){
 						that.app.setAuthCode("");
 						that.app.setAuthCodeLong("");

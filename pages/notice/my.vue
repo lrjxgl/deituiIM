@@ -1,11 +1,11 @@
 <template>
 	<view v-if="pageLoad" class="bg-a">
 
-		<view v-if="!pageData.rscount">
+		<view v-if="rscount==0">
 			<view class="emptyData">暂无消息</view>
 		</view>
 		<view v-else>
-			<view class="row-box pdb-5 mgb-5" v-for="(item,index) in pageData.data" :key="index">
+			<view class="row-box pdb-5 mgb-5" v-for="(item,index) in list" :key="index">
 				<view class="flex pdb-5 mgb-5 border-bottom">
 					<view class="btn-small btn-outline-success">{{item.status_name}}</view>
 					<view class="flex-1"></view>
@@ -24,96 +24,73 @@
 </template>
 
 <script>
-	var app = require("../../common/common.js");
- 
-	var per_page = 0;
-	var isfirst = true;
-	var catid = 0;
-	 
-	export default {
-	 
+	export default{
 		data:function(){
 			return {
-				pageLoad:false, 
-				pageHide:false,
-				pageData:{},
+				pageLoad:false,
+				list:[],
+				per_page:0,
+				isFirst:true,
+				rscount:0
 			}
-			
 		},
-		onLoad: function (option) {
-		 
-			uni.setNavigationBarTitle({
-				title: '我的消息'
-			});
+		onLoad:function(){
 			this.getPage();
 		},
-		onReachBottom: function () {
+		onReachBottom:function(){
 			this.getList();
 		},
-		onPullDownRefresh: function () {
-			this.refresh();
+		onPullDownRefresh:function(){
+			this.getPage();
+			uni.stopPullDownRefresh();
+		},
+		onShareAppMessage:function(){
+			
+		},
+		onShareTimeline:function(){
+			
 		},
 		methods: {
-			getPage: function () {
-				var that = this;
-				uni.request({
-					url: app.apiHost + "?fromapp=wxapp&m=notice&a=my&ajax=1",
-					data: {
-						authcode: app.getAuthCode()
-					},
-					success: function (data) {
-						if (data.error == 1000) {
-							uni.navigateTo({
-								url: "/pages/login/index",
-							})
-						} else {
-							isfirst = false;
-							that.pageLoad=true;
-							that.pageData = data.data.data;
-							per_page = data.data.data.per_page;
-						}
-
+			gourl:function(url){
+				uni.navigateTo({
+					url:url
+				})
+			},
+			getPage:function() {
+				var that=this;
+				that.app.get({
+					url:that.app.apiHost+"/index.php?m=notice&a=my",
+					success:function(res){
+						that.pageLoad=true;
+						that.list=res.data.data;
+						that.per_page=res.data.per_page;
+						that.rscount=res.data.rscount;
 					}
 				})
 			},
-
-			getList: function () {
-				var that = this;
-				if (!isfirst && per_page == 0) return false;
-				uni.request({
-					url: app.apiHost + "?m=notice&a=my&ajax=1",
-					data: {
-						per_page: per_page,
-						catid: catid,
-						authcode: app.getAuthCode()
+			getList:function() {
+				var that=this;
+				if(that.per_page==0 && !that.isFirst){
+					return false;
+				}
+				that.app.get({
+					url:that.app.apiHost+"/index.php?m=notice&a=my",
+					data:{
+						per_page:that.per_page
 					},
-					success: function (data) {
-
-						if (!data.data.error) {
-							if (isfirst) {
-								that.pageData.list = data.data.data.list;
-								isfirst = false;
-							} else {
-
-								that.pageData.list = app.json_add(that.pageData.list, data.data.data.list);
-							}
-							per_page = data.data.data.per_page;
-
+					success:function(res){						 
+						that.per_page=res.data.per_page;
+						if(that.isFirst){
+							that.list=res.data.data;
+							that.isFirst=false;
+						}else{
+							for(var i in res.data.data){
+								that.list.push(res.data.data[i]);
+							}							
 						}
-
-
+						
 					}
 				})
-			},
-
-			refresh: function () {
-				this.getPage();
-				setTimeout(function () {
-					uni.stopPullDownRefresh();
-				}, 1000)
-			},
-			loadMore: function () {
-				this.getList();
 			}
 		},
 	}
